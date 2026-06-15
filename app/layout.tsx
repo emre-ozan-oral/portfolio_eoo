@@ -21,12 +21,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://oralemreozan.vercel.app"),
   title: "Emre Ozan Oral – AI & Software Engineer",
   description: "Portfolio of Emre Ozan Oral, a Computer Science student specializing in AI, multi-agent systems, and LLM-based applications.",
   openGraph: {
     title: "Emre Ozan Oral – AI & Software Engineer",
     description: "Portfolio of Emre Ozan Oral, a Computer Science student specializing in AI, multi-agent systems, and LLM-based applications.",
     type: "website",
+    images: [{ url: "/opengraph-image.jpg", width: 1200, height: 630 }],
   },
 };
 
