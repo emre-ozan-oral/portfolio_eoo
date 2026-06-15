@@ -1,29 +1,7 @@
 "use client";
 
 import { useReveal } from "@/hooks/useReveal";
-
-const jobs = [
-  {
-    company: "Promake AI",
-    role: "AI Developer (Part-Time)",
-    period: "Sep 2025 – Dec 2025",
-    bullets: [
-      "Designed and implemented a multi-agent LLM system for automated website generation using LangGraph",
-      "Built agent orchestration pipelines with tool integration and dynamic routing",
-      "Developed scalable prompt workflows for structured website creation",
-    ],
-  },
-  {
-    company: "SESTEK",
-    role: "AI R&D Intern",
-    period: "Jun 2025 – Aug 2025",
-    bullets: [
-      "Built and evaluated LLM-based multi-agent systems using LangGraph and DeepEval",
-      "Implemented agent-based pipelines with open-source LLM tools (Ollama, Groq)",
-      "Conducted evaluation experiments to measure agent performance and reliability",
-    ],
-  },
-];
+import { jobs } from "@/data/content";
 
 function SectionHeader({ label }: { label: string }) {
   return (

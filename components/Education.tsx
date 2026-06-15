@@ -1,35 +1,7 @@
 "use client";
 
 import { useReveal } from "@/hooks/useReveal";
-
-const education = [
-  {
-    school: "Sabanci University",
-    degree: "B.Sc. Computer Science",
-    period: "Sep 2021 – Jun 2026",
-    note: "Full Scholarship",
-  },
-  {
-    school: "Sirri Yircali Anatolian High School",
-    degree: "High School Diploma",
-    period: "",
-    note: "Extra English & German",
-  },
-];
-
-const activities = [
-  "Computer Science Society – Sabanci University",
-  "Game Development Club – Sabanci University",
-];
-
-const interests = [
-  "Artificial Intelligence",
-  "Robotics",
-  "Cars & Automotive Tech",
-  "Game Development",
-  "Music",
-  "Swimming",
-];
+import { education, activities, interests } from "@/data/content";
 
 function SectionHeader({ label }: { label: string }) {
   return (

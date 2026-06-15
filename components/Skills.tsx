@@ -1,21 +1,7 @@
 "use client";
 
 import { useReveal } from "@/hooks/useReveal";
-
-const skillGroups = [
-  {
-    category: "Languages",
-    items: ["Python", "C++", "C#", "Java", "Verilog"],
-  },
-  {
-    category: "AI / ML",
-    items: ["PyTorch", "LangChain", "LangGraph", "DeepEval", "Scikit-Learn"],
-  },
-  {
-    category: "Tools",
-    items: ["Git", "Docker", "Ollama", "OpenAI API", "FAISS", "SLURM"],
-  },
-];
+import { skillGroups } from "@/data/content";
 
 function SectionHeader({ label }: { label: string }) {
   return (

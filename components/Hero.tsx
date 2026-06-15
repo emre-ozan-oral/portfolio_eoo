@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { FiLinkedin, FiMail, FiGithub } from "react-icons/fi";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { FiLinkedin, FiMail, FiGithub, FiDownload, FiCheck } from "react-icons/fi";
 import NeuralNet from "./NeuralNet";
+import { personal } from "@/data/content";
 
 export default function Hero() {
   const glowRef = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const hero = document.getElementById("hero");
@@ -20,6 +23,12 @@ export default function Hero() {
     hero.addEventListener("mousemove", onMove);
     return () => hero.removeEventListener("mousemove", onMove);
   }, []);
+
+  const copyEmail = () => {
+    navigator.clipboard.writeText(personal.email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <section
@@ -49,79 +58,117 @@ export default function Hero() {
         style={{ background: "linear-gradient(to bottom, transparent, #0C0C0D)" }}
       />
 
-      <div className="relative z-10 max-w-6xl mx-auto w-full">
-        <p
-          className="text-[#D4A847] text-[11px] tracking-[0.4em] uppercase mb-8 anim-fade-up"
-          style={{ animationDelay: "0.1s", fontFamily: "var(--font-mono)" }}
-        >
-          Hi, I&apos;m
-        </p>
-
-        <h1
-          className="leading-[0.88] font-bold text-[#EDE9E0] mb-8 anim-fade-up"
-          style={{
-            animationDelay: "0.2s",
-            fontFamily: "var(--font-playfair)",
-            fontSize: "clamp(72px, 13vw, 140px)",
-            letterSpacing: "-0.02em",
-          }}
-        >
-          Emre
-          <br />
-          <em className="text-[#D4A847] not-italic">Ozan</em>
-          <br />
-          Oral<span className="text-[#D4A847]">.</span>
-        </h1>
-
-        <p
-          className="text-[#3A3840] text-lg tracking-[0.12em] uppercase mb-8 anim-fade-up"
-          style={{ animationDelay: "0.35s", fontFamily: "var(--font-dm-sans)" }}
-        >
-          AI &amp; Software Engineer
-        </p>
-
-        <p
-          className="max-w-md text-[#5C5860] leading-relaxed text-[15px] mb-12 anim-fade-up"
-          style={{ animationDelay: "0.45s" }}
-        >
-          Computer Science student at Sabanci University specialising in
-          multi-agent LLM systems and AI pipelines — building scalable,
-          production-ready solutions with LangGraph, PyTorch, and modern
-          evaluation frameworks.
-        </p>
-
-        <div
-          className="flex flex-wrap gap-3 anim-fade-up"
-          style={{ animationDelay: "0.58s" }}
-        >
-          <a
-            href="https://www.linkedin.com/in/emre-ozan-oral-747840315/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 border border-[#D4A847] text-[#D4A847] hover:bg-[#D4A847] hover:text-[#0C0C0D] transition-all duration-200"
-            style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
+      <div className="relative z-10 max-w-6xl mx-auto w-full flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+        <div className="flex-1 min-w-0">
+          <p
+            className="text-[#D4A847] text-[11px] tracking-[0.4em] uppercase mb-8 anim-fade-up"
+            style={{ animationDelay: "0.1s", fontFamily: "var(--font-mono)" }}
           >
-            <FiLinkedin size={12} />
-            LINKEDIN
-          </a>
-          <a
-            href="mailto:oral.emreozan@gmail.com"
-            className="flex items-center gap-2 border border-[#2A2A2F] text-[#3A3840] hover:border-[#5C5860] hover:text-[#EDE9E0] transition-all duration-200"
-            style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
+            Hi, I&apos;m
+          </p>
+
+          <h1
+            className="leading-[0.88] font-bold text-[#EDE9E0] mb-8 anim-fade-up"
+            style={{
+              animationDelay: "0.2s",
+              fontFamily: "var(--font-playfair)",
+              fontSize: "clamp(72px, 13vw, 140px)",
+              letterSpacing: "-0.02em",
+            }}
           >
-            <FiMail size={12} />
-            EMAIL
-          </a>
-          <a
-            href="https://github.com/emreozanoral"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 border border-[#2A2A2F] text-[#3A3840] hover:border-[#5C5860] hover:text-[#EDE9E0] transition-all duration-200"
-            style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
+            {personal.name.split(" ").map((word, i) => (
+              <span key={i}>
+                {i > 0 && <br />}
+                {word === personal.highlight
+                  ? <em className="text-[#D4A847] not-italic">{word}</em>
+                  : i === personal.name.split(" ").length - 1
+                    ? <>{word}<span className="text-[#D4A847]">.</span></>
+                    : word}
+              </span>
+            ))}
+          </h1>
+
+          <p
+            className="text-[#5C5860] text-lg tracking-[0.12em] uppercase mb-8 anim-fade-up"
+            style={{ animationDelay: "0.35s", fontFamily: "var(--font-dm-sans)" }}
           >
-            <FiGithub size={12} />
-            GITHUB
-          </a>
+            {personal.tagline}
+          </p>
+
+          <p
+            className="max-w-md text-[#5C5860] leading-relaxed text-[15px] mb-12 anim-fade-up"
+            style={{ animationDelay: "0.45s" }}
+          >
+            {personal.bio}
+          </p>
+
+          <div
+            className="flex flex-wrap gap-3 anim-fade-up"
+            style={{ animationDelay: "0.58s" }}
+          >
+            <a
+              href={personal.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 border border-[#D4A847] text-[#D4A847] hover:bg-[#D4A847] hover:text-[#0C0C0D] transition-all duration-200"
+              style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
+            >
+              <FiLinkedin size={12} />
+              LINKEDIN
+            </a>
+
+            <button
+              onClick={copyEmail}
+              className="flex items-center gap-2 border border-[#2A2A2F] text-[#3A3840] hover:border-[#5C5860] hover:text-[#EDE9E0] transition-all duration-200 cursor-pointer"
+              style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
+            >
+              {copied ? <FiCheck size={12} className="text-[#D4A847]" /> : <FiMail size={12} />}
+              {copied ? <span className="text-[#D4A847]">COPIED</span> : "EMAIL"}
+            </button>
+
+            <a
+              href={personal.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 border border-[#2A2A2F] text-[#3A3840] hover:border-[#5C5860] hover:text-[#EDE9E0] transition-all duration-200"
+              style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
+            >
+              <FiGithub size={12} />
+              GITHUB
+            </a>
+
+            <a
+              href="/CV.pdf"
+              download
+              className="flex items-center gap-2 border border-[#2A2A2F] text-[#3A3840] hover:border-[#5C5860] hover:text-[#EDE9E0] transition-all duration-200"
+              style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
+            >
+              <FiDownload size={12} />
+              RESUME
+            </a>
+          </div>
+        </div>
+
+        <div className="flex-shrink-0 anim-fade-in" style={{ animationDelay: "0.6s" }}>
+          <div className="relative w-[336px] h-[336px] lg:w-[432px] lg:h-[432px]">
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{ background: "radial-gradient(circle, rgba(212,168,71,0.12) 0%, transparent 70%)", transform: "scale(1.2)" }}
+            />
+            <Image
+              src={personal.photo}
+              alt={personal.name}
+              width={432}
+              height={432}
+              className="rounded-full object-cover w-full h-full relative z-10"
+              style={{ objectPosition: "center 15%" }}
+              priority
+            />
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none z-20"
+              style={{ boxShadow: "0 0 0 1px rgba(212,168,71,0.3), 0 0 60px rgba(212,168,71,0.06)" }}
+            />
+          </div>
         </div>
       </div>
 
@@ -136,6 +183,19 @@ export default function Hero() {
         >
           Scroll
         </span>
+      </div>
+
+      <div
+        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300"
+        style={{ opacity: copied ? 1 : 0, transform: `translateX(-50%) translateY(${copied ? "0" : "8px"})` }}
+      >
+        <div
+          className="flex items-center gap-2 px-4 py-2.5 border border-[#D4A847]/30 bg-[#131315]"
+          style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", color: "#D4A847" }}
+        >
+          <FiCheck size={10} />
+          EMAIL COPIED TO CLIPBOARD
+        </div>
       </div>
     </section>
   );

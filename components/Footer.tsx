@@ -1,4 +1,5 @@
 import { FiLinkedin, FiMail, FiGithub } from "react-icons/fi";
+import { personal } from "@/data/content";
 
 export default function Footer() {
   return (
@@ -8,7 +9,7 @@ export default function Footer() {
           <p
             className="text-[#EDE9E0] text-xl mb-1.5"
             style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic" }}
-          >Emre Ozan Oral</p>
+          >{personal.name}</p>
           <p
             className="text-[#2A2A30] text-[10px] tracking-[0.2em] uppercase"
             style={{ fontFamily: "var(--font-mono)" }}
@@ -16,21 +17,21 @@ export default function Footer() {
         </div>
         <div className="flex items-center gap-6">
           <a
-            href="https://www.linkedin.com/in/emre-ozan-oral-747840315/"
+            href={personal.linkedin}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#2A2A30] hover:text-[#D4A847] transition-colors duration-200"
             aria-label="LinkedIn"
           ><FiLinkedin size={16} /></a>
           <a
-            href="https://github.com/emreozanoral"
+            href="https://github.com/emre-ozan-oral"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#2A2A30] hover:text-[#D4A847] transition-colors duration-200"
             aria-label="GitHub"
           ><FiGithub size={16} /></a>
           <a
-            href="mailto:oral.emreozan@gmail.com"
+            href={`mailto:${personal.email}`}
             className="text-[#2A2A30] hover:text-[#D4A847] transition-colors duration-200"
             aria-label="Email"
           ><FiMail size={16} /></a>

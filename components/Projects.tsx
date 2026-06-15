@@ -1,37 +1,7 @@
 "use client";
 
 import { useReveal } from "@/hooks/useReveal";
-
-const projects = [
-  {
-    name: "InfoGuide",
-    subtitle: "RAG-Based AI Information Retrieval System",
-    tag: "Graduation Project",
-    description: "End-to-end RAG system for financial knowledge retrieval. Full pipeline including document ingestion, preprocessing, embedding generation, and vector indexing (FAISS / ANN). Scalable benchmarking with HPC infrastructure (SLURM, GPU parallelisation).",
-    tech: ["Python", "LangChain", "FAISS", "RAG", "SLURM", "PyTorch"],
-  },
-  {
-    name: "AI Website Builder",
-    subtitle: "Multi-Agent LLM System",
-    tag: "Work Project",
-    description: "LLM-based system generating complete websites using coordinated agents. Supervisor-agent architecture for task routing, integrated tools, and dynamic prompts for structured HTML/CSS output.",
-    tech: ["LangGraph", "Python", "OpenAI", "Multi-Agent"],
-  },
-  {
-    name: "AI Super Resolution",
-    subtitle: "Deep Learning Image Upscaling",
-    tag: "Personal Project",
-    description: "Deep learning model for neural network-based image upscaling. Full training pipeline in PyTorch with custom image datasets and loss functions.",
-    tech: ["PyTorch", "Python", "Deep Learning", "Computer Vision"],
-  },
-  {
-    name: "Hospital Appointment App",
-    subtitle: "Android Mobile Application",
-    tag: "Academic Project",
-    description: "Mobile app for hospital appointment scheduling with scheduling logic and data handling. Built collaboratively using OOP principles and agile practices.",
-    tech: ["Java", "Android", "OOP"],
-  },
-];
+import { projects } from "@/data/content";
 
 const tagStyle: Record<string, string> = {
   "Graduation Project": "text-[#D4A847] border-[#D4A847]/30",
