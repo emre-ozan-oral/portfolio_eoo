@@ -45,10 +45,10 @@ export default function Education() {
                 className="text-[#EDE9E0] text-xl mb-2"
                 style={{ fontFamily: "var(--font-playfair)", fontWeight: 600 }}
               >{edu.school}</h3>
-              <p className="text-[#5C5860] text-[13px] mb-3">{edu.degree}</p>
+              <p className="text-[#8C8894] text-[13px] mb-3">{edu.degree}</p>
               {edu.period && (
                 <p
-                  className="text-[#2A2A30] text-[10px] tracking-[0.12em] mb-4"
+                  className="text-[#6A6670] text-[10px] tracking-[0.12em] mb-4"
                   style={{ fontFamily: "var(--font-mono)" }}
                 >{edu.period}</p>
               )}
@@ -71,7 +71,7 @@ export default function Education() {
             >Activities</h3>
             <ul className="space-y-3.5">
               {activities.map((a) => (
-                <li key={a} className="flex gap-4 text-[#5C5860] text-[13px] leading-relaxed">
+                <li key={a} className="flex gap-4 text-[#8C8894] text-[13px] leading-relaxed">
                   <span className="text-[#D4A847]/40 shrink-0 mt-px">—</span>
                   {a}
                 </li>
@@ -87,7 +87,7 @@ export default function Education() {
               {interests.map((i) => (
                 <span
                   key={i}
-                  className="text-[10px] tracking-[0.1em] px-3 py-1.5 border border-[#1D1D21] text-[#3A3840] hover:text-[#5C5860] hover:border-[#2A2A30] transition-colors duration-150"
+                  className="text-[10px] tracking-[0.1em] px-3 py-1.5 border border-[#1D1D21] text-[#6A6670] hover:text-[#8C8894] hover:border-[#6A6670] transition-colors duration-150"
                   style={{ fontFamily: "var(--font-mono)" }}
                 >{i}</span>
               ))}

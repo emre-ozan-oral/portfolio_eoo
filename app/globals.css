@@ -5,7 +5,8 @@
   --surface: #131315;
   --border: #1D1D21;
   --text: #EDE9E0;
-  --muted: #5C5860;
+  --muted: #8C8894;    /* body copy — ~5.6:1 on --bg, meets WCAG AA */
+  --dim: #6A6670;      /* secondary labels (dates, chips) — ~3.5:1 on --bg */
   --accent: #D4A847;
   --accent-dim: rgba(212, 168, 71, 0.08);
 }
@@ -23,6 +24,7 @@ body {
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 /* Subtle grain overlay */

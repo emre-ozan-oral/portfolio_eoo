@@ -89,14 +89,14 @@ export default function Hero() {
           </h1>
 
           <p
-            className="text-[#5C5860] text-lg tracking-[0.12em] uppercase mb-8 anim-fade-up"
+            className="text-[#8C8894] text-lg tracking-[0.12em] uppercase mb-8 anim-fade-up"
             style={{ animationDelay: "0.35s", fontFamily: "var(--font-dm-sans)" }}
           >
             {personal.tagline}
           </p>
 
           <p
-            className="max-w-md text-[#5C5860] leading-relaxed text-[15px] mb-12 anim-fade-up"
+            className="max-w-md text-[#8C8894] leading-relaxed text-[15px] mb-12 anim-fade-up"
             style={{ animationDelay: "0.45s" }}
           >
             {personal.bio}
@@ -110,7 +110,7 @@ export default function Hero() {
               href={personal.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 border border-[#D4A847] text-[#D4A847] hover:bg-[#D4A847] hover:text-[#0C0C0D] transition-all duration-200"
+              className="flex items-center gap-2 border border-[#D4A847] text-[#D4A847] hover:bg-[#D4A847] hover:text-[#0C0C0D] transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
               style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
             >
               <FiLinkedin size={12} />
@@ -119,7 +119,7 @@ export default function Hero() {
 
             <button
               onClick={copyEmail}
-              className="flex items-center gap-2 border border-[#2A2A2F] text-[#3A3840] hover:border-[#5C5860] hover:text-[#EDE9E0] transition-all duration-200 cursor-pointer"
+              className="flex items-center gap-2 border border-[#2A2A2F] text-[#8C8894] hover:border-[#8C8894] hover:text-[#EDE9E0] transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
               style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
             >
               {copied ? <FiCheck size={12} className="text-[#D4A847]" /> : <FiMail size={12} />}
@@ -130,7 +130,7 @@ export default function Hero() {
               href={personal.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 border border-[#2A2A2F] text-[#3A3840] hover:border-[#5C5860] hover:text-[#EDE9E0] transition-all duration-200"
+              className="flex items-center gap-2 border border-[#2A2A2F] text-[#8C8894] hover:border-[#8C8894] hover:text-[#EDE9E0] transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
               style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
             >
               <FiGithub size={12} />
@@ -140,7 +140,7 @@ export default function Hero() {
             <a
               href="/CV.pdf"
               download
-              className="flex items-center gap-2 border border-[#2A2A2F] text-[#3A3840] hover:border-[#5C5860] hover:text-[#EDE9E0] transition-all duration-200"
+              className="flex items-center gap-2 border border-[#2A2A2F] text-[#8C8894] hover:border-[#8C8894] hover:text-[#EDE9E0] transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
               style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
             >
               <FiDownload size={12} />
@@ -150,7 +150,7 @@ export default function Hero() {
         </div>
 
         <div className="flex-shrink-0 anim-fade-in" style={{ animationDelay: "0.6s" }}>
-          <div className="relative w-[336px] h-[336px] lg:w-[432px] lg:h-[432px]">
+          <div className="relative w-[200px] h-[200px] sm:w-[280px] sm:h-[280px] md:w-[336px] md:h-[336px] lg:w-[432px] lg:h-[432px]">
             <div
               className="absolute inset-0 rounded-full pointer-events-none"
               style={{ background: "radial-gradient(circle, rgba(212,168,71,0.12) 0%, transparent 70%)", transform: "scale(1.2)" }}
@@ -178,7 +178,7 @@ export default function Hero() {
       >
         <div className="w-px h-14 bg-gradient-to-b from-[#D4A847]/30 to-transparent" />
         <span
-          className="text-[#2A2A2F] text-[9px] tracking-[0.3em] uppercase -rotate-90 mt-2"
+          className="text-[#6A6670] text-[9px] tracking-[0.3em] uppercase -rotate-90 mt-2"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           Scroll

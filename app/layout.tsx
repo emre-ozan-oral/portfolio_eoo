@@ -20,16 +20,43 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = "https://oralemreozan.vercel.app";
+const SITE_DESCRIPTION =
+  "Portfolio of Emre Ozan Oral, a Computer Science graduate specializing in AI, multi-agent systems, and LLM-based applications.";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://oralemreozan.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: "Emre Ozan Oral – AI & Software Engineer",
-  description: "Portfolio of Emre Ozan Oral, a Computer Science student specializing in AI, multi-agent systems, and LLM-based applications.",
+  description: SITE_DESCRIPTION,
   openGraph: {
     title: "Emre Ozan Oral – AI & Software Engineer",
-    description: "Portfolio of Emre Ozan Oral, a Computer Science student specializing in AI, multi-agent systems, and LLM-based applications.",
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
     type: "website",
     images: [{ url: "/opengraph-image.jpg", width: 1200, height: 630 }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Emre Ozan Oral – AI & Software Engineer",
+    description: SITE_DESCRIPTION,
+    images: ["/opengraph-image.jpg"],
+  },
+};
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Emre Ozan Oral",
+  url: SITE_URL,
+  jobTitle: "AI & Software Engineer",
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "Sabanci University",
+  },
+  sameAs: [
+    "https://www.linkedin.com/in/emre-ozan-oral/",
+    "https://github.com/emre-ozan-oral",
+  ],
 };
 
 export default function RootLayout({
@@ -40,7 +67,13 @@ export default function RootLayout({
       lang="en"
       className={`${playfair.variable} ${dmSans.variable} ${geistMono.variable} antialiased`}
     >
-      <body className="min-h-screen">{children}</body>
+      <body className="min-h-screen">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

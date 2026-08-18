@@ -11,7 +11,7 @@ export default function Footer() {
             style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic" }}
           >{personal.name}</p>
           <p
-            className="text-[#2A2A30] text-[10px] tracking-[0.2em] uppercase"
+            className="text-[#6A6670] text-[10px] tracking-[0.2em] uppercase"
             style={{ fontFamily: "var(--font-mono)" }}
           >{`© ${new Date().getFullYear()} · All rights reserved`}</p>
         </div>
@@ -20,19 +20,19 @@ export default function Footer() {
             href={personal.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#2A2A30] hover:text-[#D4A847] transition-colors duration-200"
+            className="text-[#6A6670] hover:text-[#D4A847] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
             aria-label="LinkedIn"
           ><FiLinkedin size={16} /></a>
           <a
             href="https://github.com/emre-ozan-oral"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#2A2A30] hover:text-[#D4A847] transition-colors duration-200"
+            className="text-[#6A6670] hover:text-[#D4A847] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
             aria-label="GitHub"
           ><FiGithub size={16} /></a>
           <a
             href={`mailto:${personal.email}`}
-            className="text-[#2A2A30] hover:text-[#D4A847] transition-colors duration-200"
+            className="text-[#6A6670] hover:text-[#D4A847] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
             aria-label="Email"
           ><FiMail size={16} /></a>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { FiMenu, FiX } from "react-icons/fi";
 
 const links = [
   { label: "Experience", href: "#experience" },
@@ -11,6 +12,7 @@ const links = [
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -21,7 +23,7 @@ export default function Nav() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
+        scrolled || open
           ? "bg-[#0C0C0D]/95 backdrop-blur-xl border-b border-[#1D1D21]"
           : "bg-transparent"
       }`}
@@ -29,17 +31,19 @@ export default function Nav() {
       <div className="max-w-6xl mx-auto px-8 py-5 flex items-center justify-between">
         <a
           href="#hero"
-          className="text-[#D4A847] text-base transition-opacity hover:opacity-60"
+          className="text-[#D4A847] text-base transition-opacity hover:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-4"
           style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic" }}
+          onClick={() => setOpen(false)}
         >
           EOO
         </a>
-        <ul className="flex items-center gap-8">
+
+        <ul className="hidden sm:flex items-center gap-8">
           {links.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-[11px] tracking-[0.18em] uppercase text-[#5C5860] hover:text-[#EDE9E0] transition-colors duration-200"
+                className="text-[11px] tracking-[0.18em] uppercase text-[#8C8894] hover:text-[#EDE9E0] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
                 style={{ fontFamily: "var(--font-mono)" }}
               >
                 {link.label}
@@ -47,7 +51,36 @@ export default function Nav() {
             </li>
           ))}
         </ul>
+
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="sm:hidden text-[#EDE9E0] p-1 -mr-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+        >
+          {open ? <FiX size={20} /> : <FiMenu size={20} />}
+        </button>
       </div>
+
+      {open && (
+        <div className="sm:hidden border-t border-[#1D1D21] px-8 py-6">
+          <ul className="flex flex-col gap-5">
+            {links.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className="text-[13px] tracking-[0.18em] uppercase text-[#8C8894] hover:text-[#EDE9E0] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
+                  style={{ fontFamily: "var(--font-mono)" }}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </nav>
   );
 }

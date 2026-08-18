@@ -52,7 +52,7 @@ export default function Skills() {
                 {group.items.map((skill) => (
                   <li
                     key={skill}
-                    className="text-[#3A3840] hover:text-[#EDE9E0] transition-colors duration-150 cursor-default text-[17px] leading-none"
+                    className="text-[#8C8894] hover:text-[#EDE9E0] transition-colors duration-150 cursor-default text-[17px] leading-none"
                     style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic" }}
                   >{skill}</li>
                 ))}

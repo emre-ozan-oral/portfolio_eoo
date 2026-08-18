@@ -2,11 +2,11 @@
 
 export const personal = {
   name: "Emre Ozan Oral",
-  highlight: "Ozan",           // part of name rendered in gold
+  highlight: "Oral",           // part of name rendered in gold
   tagline: "AI & Software Engineer",
-  bio: "Computer Science student at Sabanci University specialising in multi-agent LLM systems and AI pipelines — building scalable, production-ready solutions with LangGraph, PyTorch, and modern evaluation frameworks.",
+  bio: "Computer Science graduate from Sabanci University specialising in multi-agent LLM systems and AI pipelines — building scalable, production-ready solutions with LangGraph, PyTorch, and modern evaluation frameworks.",
   email: "oral.emreozan@gmail.com",
-  linkedin: "https://www.linkedin.com/in/emre-ozan-oral-747840315/",
+  linkedin: "https://www.linkedin.com/in/emre-ozan-oral/",
   github: "https://github.com/emre-ozan-oral",
   photo: "/photo.jpg",
 };
@@ -58,6 +58,15 @@ export const projects: {
     tech: ["Python", "LangChain", "FAISS", "RAG", "SLURM", "PyTorch"],
   },
   {
+    name: "Recruta",
+    subtitle: "Multi-Agent Job Application Assistant",
+    tag: "Personal Project",
+    description:
+      "Give it a job posting and a CV, and a LangGraph-orchestrated team of agents takes over — extracting structured requirements, matching them against the CV, and scoring fit per-requirement with weighted, evidence-backed verdicts. Also generates interview prep and a final report. Runs as a local Streamlit app backed by Groq.",
+    tech: ["LangGraph", "Groq", "Python", "Streamlit", "Multi-Agent", "SQLite"],
+    github: "https://github.com/emre-ozan-oral/Recruta",
+  },
+  {
     name: "AI Website Builder",
     subtitle: "Multi-Agent LLM System",
     tag: "Work Project",
@@ -96,7 +105,7 @@ export const skillGroups = [
   },
   {
     category: "Tools",
-    items: ["Git", "Docker", "Ollama", "OpenAI API", "FAISS", "SLURM"],
+    items: ["Git", "Docker", "Ollama", "OpenAI API", "Groq", "Streamlit", "FAISS", "SLURM"],
   },
 ];
 

@@ -56,13 +56,13 @@ export default function Experience() {
                   >{job.role}</p>
                 </div>
                 <span
-                  className="text-[#2A2A30] text-[10px] tracking-[0.12em] uppercase mt-0.5"
+                  className="text-[#6A6670] text-[10px] tracking-[0.12em] uppercase mt-0.5"
                   style={{ fontFamily: "var(--font-mono)" }}
                 >{job.period}</span>
               </div>
               <ul className="space-y-3">
                 {job.bullets.map((b, i) => (
-                  <li key={i} className="flex gap-4 text-[#5C5860] text-[14px] leading-relaxed">
+                  <li key={i} className="flex gap-4 text-[#8C8894] text-[14px] leading-relaxed">
                     <span className="text-[#D4A847]/50 mt-0.5 shrink-0 text-xs">—</span>
                     {b}
                   </li>
