@@ -1,27 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { FiLinkedin, FiMail, FiGithub, FiDownload, FiCheck } from "react-icons/fi";
 import { personal } from "@/data/content";
 
 export default function Hero() {
-  const glowRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    const hero = document.getElementById("hero");
-    if (!hero) return;
-    const onMove = (e: MouseEvent) => {
-      const rect = hero.getBoundingClientRect();
-      if (glowRef.current) {
-        glowRef.current.style.left = `${e.clientX - rect.left}px`;
-        glowRef.current.style.top  = `${e.clientY - rect.top}px`;
-      }
-    };
-    hero.addEventListener("mousemove", onMove);
-    return () => hero.removeEventListener("mousemove", onMove);
-  }, []);
 
   const copyEmail = () => {
     navigator.clipboard.writeText(personal.email);
@@ -34,17 +19,6 @@ export default function Hero() {
       id="hero"
       className="relative min-h-screen flex flex-col justify-center px-8 overflow-hidden"
     >
-      <div
-        ref={glowRef}
-        className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full"
-        style={{
-          background: "radial-gradient(circle, rgba(212,168,71,0.07) 0%, transparent 65%)",
-          left: "50%",
-          top: "50%",
-          transition: "none",
-        }}
-      />
-
       <div
         className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full pointer-events-none"
         style={{ background: "radial-gradient(circle, rgba(212,168,71,0.04) 0%, transparent 60%)" }}
