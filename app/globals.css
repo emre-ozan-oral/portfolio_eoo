@@ -127,10 +127,35 @@ body::after {
   transform: translateY(0);
 }
 
+/* ── Gradient mesh wallpaper ───────────────
+   Large, soft, blurred colour blobs fixed behind everything — gold plus the
+   existing tag hues, reused so no new colours enter the palette. This is
+   what actually breaks up the flat black/white; the particle network above
+   it is just added texture. Static (no animation), so the blur cost is a
+   one-time paint, not a per-frame one. */
+.bg-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    radial-gradient(650px circle at 10% 15%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 70%),
+    radial-gradient(750px circle at 90% 20%, color-mix(in srgb, var(--tag-work) 20%, transparent), transparent 70%),
+    radial-gradient(700px circle at 85% 90%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%),
+    radial-gradient(600px circle at 12% 88%, color-mix(in srgb, var(--tag-personal) 16%, transparent), transparent 70%);
+  filter: blur(70px);
+  opacity: 0.5;
+  transition: opacity 0.3s ease, background-image 0.3s ease;
+}
+
+[data-theme="light"] .bg-mesh {
+  opacity: 0.65;
+}
+
 /* ── Ambient network wallpaper ────────────
    Fixed, full-page canvas rendered once from the layout; kept behind all
-   content via the stacking-context fix above. Opacity stays low so it reads
-   as ambient texture, not a focal element. */
+   content via the stacking-context fix above, above the mesh. Opacity stays
+   low so it reads as texture, not a focal element. */
 .bg-network {
   position: fixed;
   inset: 0;

@@ -81,6 +81,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
+        <div className="bg-mesh" aria-hidden />
         <div className="bg-network" aria-hidden>
           <NeuralNet />
         </div>
