@@ -50,11 +50,6 @@ export default function Hero() {
         style={{ background: "radial-gradient(circle, rgba(212,168,71,0.04) 0%, transparent 60%)" }}
       />
 
-      <div
-        className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none"
-        style={{ background: "linear-gradient(to bottom, transparent, var(--bg))" }}
-      />
-
       <div className="relative z-10 max-w-6xl mx-auto w-full flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
         <div className="flex-1 min-w-0">
           <p
