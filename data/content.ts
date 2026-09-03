@@ -67,6 +67,16 @@ export const projects: {
     github: "https://github.com/emre-ozan-oral/Recruta",
   },
   {
+    name: "Jobly",
+    subtitle: "Job Application Tracking System",
+    tag: "Personal Project",
+    description:
+      "Full-stack job application tracker pairing a Next.js dashboard with a Chrome extension for one-click job capture from LinkedIn and other job boards. Tracks applications through a Saved → Applied → Interviewing → Offer/Rejected/Withdrawn pipeline with real-time updates, backed by Supabase Postgres with Row Level Security for per-user data isolation.",
+    tech: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "Chrome Extension"],
+    github: "https://github.com/emre-ozan-oral/Jobly",
+    live: "https://jobly-puce.vercel.app/",
+  },
+  {
     name: "AI Website Builder",
     subtitle: "Multi-Agent LLM System",
     tag: "Work Project",
