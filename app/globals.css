@@ -139,16 +139,18 @@ body::after {
   z-index: -2;
   pointer-events: none;
   background-image:
-    radial-gradient(1200px circle at 10% 5%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 65%),
-    radial-gradient(1300px circle at 90% 98%, color-mix(in srgb, var(--tag-work) 20%, transparent), transparent 65%),
-    radial-gradient(900px circle at 95% 10%, color-mix(in srgb, var(--tag-personal) 14%, transparent), transparent 70%);
-  filter: blur(110px);
-  opacity: 0.6;
+    radial-gradient(900px circle at 8% 5%, color-mix(in srgb, var(--accent) 45%, transparent), transparent 65%),
+    radial-gradient(1000px circle at 92% 95%, color-mix(in srgb, var(--tag-work) 42%, transparent), transparent 65%),
+    radial-gradient(750px circle at 95% 8%, color-mix(in srgb, var(--tag-personal) 38%, transparent), transparent 65%),
+    radial-gradient(800px circle at 5% 95%, color-mix(in srgb, var(--tag-academic) 32%, transparent), transparent 65%),
+    radial-gradient(650px circle at 50% 50%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%);
+  filter: blur(55px);
+  opacity: 0.9;
   transition: opacity 0.3s ease, background-image 0.3s ease;
 }
 
 [data-theme="light"] .bg-mesh {
-  opacity: 0.75;
+  opacity: 1;
 }
 
 /* ── Ambient network wallpaper ────────────
