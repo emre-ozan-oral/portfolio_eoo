@@ -243,9 +243,9 @@ export default function SudokuGame() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-32 gap-4">
-        <FiRefreshCw className="animate-spin text-[#D4A847]" size={22} />
+        <FiRefreshCw className="animate-spin text-[var(--accent)]" size={22} />
         <p
-          className="text-[#6A6670] text-[11px] tracking-[0.2em] uppercase"
+          className="text-[var(--dim)] text-[11px] tracking-[0.2em] uppercase"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           Generating puzzle…
@@ -257,16 +257,16 @@ export default function SudokuGame() {
   return (
     <div className="flex flex-col items-center gap-8">
       {/* Difficulty tabs */}
-      <div className="flex items-center gap-1 border border-[#1D1D21] p-1">
+      <div className="flex items-center gap-1 border border-[var(--border)] p-1">
         {DIFFICULTIES.map((d) => (
           <button
             key={d.key}
             type="button"
             onClick={() => newGame(d.key)}
-            className={`px-4 py-2 text-[11px] tracking-[0.18em] uppercase transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2 ${
+            className={`px-4 py-2 text-[11px] tracking-[0.18em] uppercase transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2 ${
               difficulty === d.key
-                ? "bg-[#D4A847] text-[#0C0C0D]"
-                : "text-[#8C8894] hover:text-[#EDE9E0]"
+                ? "bg-[var(--accent)] text-[var(--bg)]"
+                : "text-[var(--muted)] hover:text-[var(--text)]"
             }`}
             style={{ fontFamily: "var(--font-mono)" }}
           >
@@ -279,43 +279,43 @@ export default function SudokuGame() {
       <div className="flex items-center gap-8">
         <div className="flex flex-col items-center">
           <span
-            className="text-[#EDE9E0] text-lg tabular-nums"
+            className="text-[var(--text)] text-lg tabular-nums"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             {formatTime(elapsed)}
           </span>
           <span
-            className="text-[#6A6670] text-[9px] tracking-[0.2em] uppercase mt-0.5"
+            className="text-[var(--dim)] text-[9px] tracking-[0.2em] uppercase mt-0.5"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             Time
           </span>
         </div>
-        <div className="w-px h-8 bg-[#1D1D21]" />
+        <div className="w-px h-8 bg-[var(--border)]" />
         <div className="flex flex-col items-center">
           <span
-            className={`text-lg tabular-nums ${mistakes > 0 ? "text-[#D46A6A]" : "text-[#EDE9E0]"}`}
+            className={`text-lg tabular-nums ${mistakes > 0 ? "text-[var(--error)]" : "text-[var(--text)]"}`}
             style={{ fontFamily: "var(--font-mono)" }}
           >
             {mistakes}
           </span>
           <span
-            className="text-[#6A6670] text-[9px] tracking-[0.2em] uppercase mt-0.5"
+            className="text-[var(--dim)] text-[9px] tracking-[0.2em] uppercase mt-0.5"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             Mistakes
           </span>
         </div>
-        <div className="w-px h-8 bg-[#1D1D21]" />
+        <div className="w-px h-8 bg-[var(--border)]" />
         <div className="flex flex-col items-center">
           <span
-            className="text-[#EDE9E0] text-lg tabular-nums"
+            className="text-[var(--text)] text-lg tabular-nums"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             {81 - CLUE_TARGET[difficulty]}
           </span>
           <span
-            className="text-[#6A6670] text-[9px] tracking-[0.2em] uppercase mt-0.5"
+            className="text-[var(--dim)] text-[9px] tracking-[0.2em] uppercase mt-0.5"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             To fill
@@ -326,7 +326,7 @@ export default function SudokuGame() {
       {/* Board */}
       <div className="relative">
         <div
-          className={`grid grid-cols-9 border-2 border-[#D4A847]/40 bg-[#131315] select-none ${
+          className={`grid grid-cols-9 border-2 border-[var(--accent)]/40 bg-[var(--surface)] select-none ${
             solved || revealed ? "opacity-90" : ""
           }`}
         >
@@ -343,8 +343,8 @@ export default function SudokuGame() {
               const conflict = value !== 0 && hasConflict(board, r, c);
 
               let bg = "bg-transparent";
-              if (isSelected) bg = "bg-[#D4A847]/25";
-              else if (sameValue) bg = "bg-[#D4A847]/12";
+              if (isSelected) bg = "bg-[var(--accent)]/25";
+              else if (sameValue) bg = "bg-[var(--accent)]/12";
               else if (sameBox || sameRowCol) bg = "bg-white/[0.03]";
 
               return (
@@ -355,16 +355,16 @@ export default function SudokuGame() {
                   className={`
                     aspect-square w-[min(9.5vw,42px)] sm:w-[46px] flex items-center justify-center
                     text-[17px] sm:text-[19px] transition-colors duration-150
-                    border-[0.5px] border-[#1D1D21]
-                    ${r % 3 === 0 ? "border-t-[1.5px] border-t-[#D4A847]/40" : ""}
-                    ${c % 3 === 0 ? "border-l-[1.5px] border-l-[#D4A847]/40" : ""}
-                    ${r === 8 ? "border-b-[1.5px] border-b-[#D4A847]/40" : ""}
-                    ${c === 8 ? "border-r-[1.5px] border-r-[#D4A847]/40" : ""}
+                    border-[0.5px] border-[var(--border)]
+                    ${r % 3 === 0 ? "border-t-[1.5px] border-t-[var(--accent)]/40" : ""}
+                    ${c % 3 === 0 ? "border-l-[1.5px] border-l-[var(--accent)]/40" : ""}
+                    ${r === 8 ? "border-b-[1.5px] border-b-[var(--accent)]/40" : ""}
+                    ${c === 8 ? "border-r-[1.5px] border-r-[var(--accent)]/40" : ""}
                     ${bg}
                   `}
                   style={{
                     fontFamily: "var(--font-mono)",
-                    color: conflict ? "#D46A6A" : given ? "#EDE9E0" : "#D4A847",
+                    color: conflict ? "var(--error)" : given ? "var(--text)" : "var(--accent)",
                     fontWeight: given ? 500 : 600,
                     cursor: status === "playing" ? "pointer" : "default",
                   }}
@@ -378,15 +378,15 @@ export default function SudokuGame() {
         </div>
 
         {solved && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[#0C0C0D]/90 backdrop-blur-sm">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm">
             <p
-              className="text-[#D4A847] text-2xl"
+              className="text-[var(--accent)] text-2xl"
               style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontWeight: 600 }}
             >
               Solved
             </p>
             <p
-              className="text-[#8C8894] text-[12px] tracking-[0.1em]"
+              className="text-[var(--muted)] text-[12px] tracking-[0.1em]"
               style={{ fontFamily: "var(--font-mono)" }}
             >
               {formatTime(elapsed)} · {mistakes} mistake{mistakes === 1 ? "" : "s"}
@@ -394,7 +394,7 @@ export default function SudokuGame() {
             <button
               type="button"
               onClick={() => newGame(difficulty)}
-              className="mt-4 px-5 py-2 text-[11px] tracking-[0.18em] uppercase text-[#0C0C0D] bg-[#D4A847] hover:opacity-90 transition-opacity"
+              className="mt-4 px-5 py-2 text-[11px] tracking-[0.18em] uppercase text-[var(--bg)] bg-[var(--accent)] hover:opacity-90 transition-opacity"
               style={{ fontFamily: "var(--font-mono)" }}
             >
               Play again
@@ -411,7 +411,7 @@ export default function SudokuGame() {
             type="button"
             disabled={!selected || status !== "playing" || remainingCounts[d] <= 0}
             onClick={() => selected && setCell(selected.r, selected.c, d)}
-            className="aspect-square flex flex-col items-center justify-center border border-[#1D1D21] text-[#EDE9E0] text-[15px] hover:border-[#D4A847]/40 hover:text-[#D4A847] transition-colors duration-150 disabled:opacity-25 disabled:hover:border-[#1D1D21] disabled:hover:text-[#EDE9E0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
+            className="aspect-square flex flex-col items-center justify-center border border-[var(--border)] text-[var(--text)] text-[15px] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-colors duration-150 disabled:opacity-25 disabled:hover:border-[var(--border)] disabled:hover:text-[var(--text)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             {d}
@@ -425,7 +425,7 @@ export default function SudokuGame() {
           type="button"
           onClick={handleUndo}
           disabled={history.length === 0 || status !== "playing"}
-          className="flex items-center gap-2 px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase text-[#8C8894] border border-[#1D1D21] hover:text-[#EDE9E0] hover:border-[#8C8894]/40 transition-colors duration-200 disabled:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
+          className="flex items-center gap-2 px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase text-[var(--muted)] border border-[var(--border)] hover:text-[var(--text)] hover:border-[var(--muted)]/40 transition-colors duration-200 disabled:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           <FiRotateCcw size={13} /> Undo
@@ -434,7 +434,7 @@ export default function SudokuGame() {
           type="button"
           onClick={() => selected && setCell(selected.r, selected.c, 0)}
           disabled={!selected || status !== "playing"}
-          className="flex items-center gap-2 px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase text-[#8C8894] border border-[#1D1D21] hover:text-[#EDE9E0] hover:border-[#8C8894]/40 transition-colors duration-200 disabled:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
+          className="flex items-center gap-2 px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase text-[var(--muted)] border border-[var(--border)] hover:text-[var(--text)] hover:border-[var(--muted)]/40 transition-colors duration-200 disabled:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           <FiDelete size={13} /> Erase
@@ -442,7 +442,7 @@ export default function SudokuGame() {
         <button
           type="button"
           onClick={handleReset}
-          className="flex items-center gap-2 px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase text-[#8C8894] border border-[#1D1D21] hover:text-[#EDE9E0] hover:border-[#8C8894]/40 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
+          className="flex items-center gap-2 px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase text-[var(--muted)] border border-[var(--border)] hover:text-[var(--text)] hover:border-[var(--muted)]/40 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           <FiRefreshCw size={13} /> Restart
@@ -451,7 +451,7 @@ export default function SudokuGame() {
           type="button"
           onClick={handleReveal}
           disabled={status !== "playing"}
-          className="flex items-center gap-2 px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase text-[#8C8894] border border-[#1D1D21] hover:text-[#D46A6A] hover:border-[#D46A6A]/40 transition-colors duration-200 disabled:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
+          className="flex items-center gap-2 px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase text-[var(--muted)] border border-[var(--border)] hover:text-[var(--error)] hover:border-[var(--error)]/40 transition-colors duration-200 disabled:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           <FiEye size={13} /> Reveal
@@ -459,7 +459,7 @@ export default function SudokuGame() {
         <button
           type="button"
           onClick={() => newGame(difficulty)}
-          className="flex items-center gap-2 px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase text-[#0C0C0D] bg-[#D4A847] hover:opacity-90 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
+          className="flex items-center gap-2 px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase text-[var(--bg)] bg-[var(--accent)] hover:opacity-90 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           New game

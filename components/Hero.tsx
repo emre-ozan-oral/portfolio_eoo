@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { FiLinkedin, FiMail, FiGithub, FiDownload, FiCheck } from "react-icons/fi";
-import NeuralNet from "./NeuralNet";
 import { personal } from "@/data/content";
 
 export default function Hero() {
@@ -35,8 +34,6 @@ export default function Hero() {
       id="hero"
       className="relative min-h-screen flex flex-col justify-center px-8 overflow-hidden"
     >
-      <NeuralNet className="opacity-45" />
-
       <div
         ref={glowRef}
         className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full"

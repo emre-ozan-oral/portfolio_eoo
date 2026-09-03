@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, DM_Sans, Geist_Mono } from "next/font/google";
+import NeuralNet from "@/components/NeuralNet";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -80,6 +81,9 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
+        <div className="bg-network" aria-hidden>
+          <NeuralNet />
+        </div>
         {children}
       </body>
     </html>

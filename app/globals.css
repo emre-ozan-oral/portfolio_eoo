@@ -10,6 +10,7 @@
   --dim: #6A6670;      /* secondary labels (dates, chips) — ~3.5:1 on --bg */
   --accent: #D4A847;
   --accent-dim: rgba(212, 168, 71, 0.08);
+  --error: #D46A6A;
 
   /* Project-tag accents */
   --tag-work: #7EB8D4;
@@ -31,6 +32,7 @@
   --dim: #7A7468;      /* ~4.3:1 on --bg */
   --accent: #9C6B0F;   /* darkened gold — ~4.6:1 on --bg, still reads as yellow/gold */
   --accent-dim: rgba(156, 107, 15, 0.08);
+  --error: #B23A3A;
 
   --tag-work: #2E6E96;
   --tag-personal: #2F7D53;
@@ -48,9 +50,15 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--bg); /* keeps body's bg from propagating to the canvas, so a
+                             fixed, negative z-index layer inside body can still
+                             paint above it */
 }
 
 body {
+  position: relative;
+  isolation: isolate; /* own stacking context, so z-index: -1 children stack
+                          above body's background instead of vanishing under it */
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
@@ -75,26 +83,6 @@ body::after {
   opacity: 0.015;
 }
 
-/* Faint gold hairline field — a background detail, not a focal point */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-    115deg,
-    var(--accent) 0px,
-    var(--accent) 1px,
-    transparent 1px,
-    transparent 170px
-  );
-  opacity: 0.05;
-  pointer-events: none;
-  z-index: 9999;
-}
-
-[data-theme="light"] body::before {
-  opacity: 0.07;
-}
 
 /* Selection */
 ::selection {
@@ -137,6 +125,29 @@ body::before {
 .reveal.in-view {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ── Ambient network wallpaper ────────────
+   Fixed, full-page canvas rendered once from the layout; kept behind all
+   content via the stacking-context fix above. Opacity stays low so it reads
+   as ambient texture, not a focal element. */
+.bg-network {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.14;
+  transition: opacity 0.3s ease;
+}
+
+[data-theme="light"] .bg-network {
+  opacity: 0.18;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-network {
+    opacity: 0.08;
+  }
 }
 
 /* ── Accent rule ──────────────────────────
