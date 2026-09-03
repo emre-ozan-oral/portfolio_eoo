@@ -115,7 +115,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="flex-shrink-0 anim-fade-in" style={{ animationDelay: "0.6s" }}>
+        <div className="flex-shrink-0 order-first lg:order-none anim-fade-in" style={{ animationDelay: "0.6s" }}>
           <div className="relative w-[200px] h-[200px] sm:w-[280px] sm:h-[280px] md:w-[336px] md:h-[336px] lg:w-[432px] lg:h-[432px]">
             <div
               className="absolute inset-0 rounded-full pointer-events-none"
