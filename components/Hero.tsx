@@ -55,20 +55,20 @@ export default function Hero() {
 
       <div
         className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none"
-        style={{ background: "linear-gradient(to bottom, transparent, #0C0C0D)" }}
+        style={{ background: "linear-gradient(to bottom, transparent, var(--bg))" }}
       />
 
       <div className="relative z-10 max-w-6xl mx-auto w-full flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
         <div className="flex-1 min-w-0">
           <p
-            className="text-[#D4A847] text-[11px] tracking-[0.4em] uppercase mb-8 anim-fade-up"
+            className="text-[var(--accent)] text-[11px] tracking-[0.4em] uppercase mb-8 anim-fade-up"
             style={{ animationDelay: "0.1s", fontFamily: "var(--font-mono)" }}
           >
             Hi, I&apos;m
           </p>
 
           <h1
-            className="leading-[0.88] font-bold text-[#EDE9E0] mb-8 anim-fade-up"
+            className="leading-[0.88] font-bold text-[var(--text)] mb-8 anim-fade-up"
             style={{
               animationDelay: "0.2s",
               fontFamily: "var(--font-playfair)",
@@ -80,23 +80,23 @@ export default function Hero() {
               <span key={i}>
                 {i > 0 && <br />}
                 {word === personal.highlight
-                  ? <em className="text-[#D4A847] not-italic">{word}</em>
+                  ? <em className="text-[var(--accent)] not-italic">{word}</em>
                   : i === personal.name.split(" ").length - 1
-                    ? <>{word}<span className="text-[#D4A847]">.</span></>
+                    ? <>{word}<span className="text-[var(--accent)]">.</span></>
                     : word}
               </span>
             ))}
           </h1>
 
           <p
-            className="text-[#8C8894] text-lg tracking-[0.12em] uppercase mb-8 anim-fade-up"
+            className="text-[var(--muted)] text-lg tracking-[0.12em] uppercase mb-8 anim-fade-up"
             style={{ animationDelay: "0.35s", fontFamily: "var(--font-dm-sans)" }}
           >
             {personal.tagline}
           </p>
 
           <p
-            className="max-w-md text-[#8C8894] leading-relaxed text-[15px] mb-12 anim-fade-up"
+            className="max-w-md text-[var(--muted)] leading-relaxed text-[15px] mb-12 anim-fade-up"
             style={{ animationDelay: "0.45s" }}
           >
             {personal.bio}
@@ -110,7 +110,7 @@ export default function Hero() {
               href={personal.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 border border-[#D4A847] text-[#D4A847] hover:bg-[#D4A847] hover:text-[#0C0C0D] transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
+              className="flex items-center gap-2 border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--bg)] transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
               style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
             >
               <FiLinkedin size={12} />
@@ -119,18 +119,18 @@ export default function Hero() {
 
             <button
               onClick={copyEmail}
-              className="flex items-center gap-2 border border-[#2A2A2F] text-[#8C8894] hover:border-[#8C8894] hover:text-[#EDE9E0] transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
+              className="flex items-center gap-2 border border-[var(--border-2)] text-[var(--muted)] hover:border-[var(--muted)] hover:text-[var(--text)] transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
               style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
             >
-              {copied ? <FiCheck size={12} className="text-[#D4A847]" /> : <FiMail size={12} />}
-              {copied ? <span className="text-[#D4A847]">COPIED</span> : "EMAIL"}
+              {copied ? <FiCheck size={12} className="text-[var(--accent)]" /> : <FiMail size={12} />}
+              {copied ? <span className="text-[var(--accent)]">COPIED</span> : "EMAIL"}
             </button>
 
             <a
               href={personal.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 border border-[#2A2A2F] text-[#8C8894] hover:border-[#8C8894] hover:text-[#EDE9E0] transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
+              className="flex items-center gap-2 border border-[var(--border-2)] text-[var(--muted)] hover:border-[var(--muted)] hover:text-[var(--text)] transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
               style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
             >
               <FiGithub size={12} />
@@ -140,7 +140,7 @@ export default function Hero() {
             <a
               href="/CV.pdf"
               download
-              className="flex items-center gap-2 border border-[#2A2A2F] text-[#8C8894] hover:border-[#8C8894] hover:text-[#EDE9E0] transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
+              className="flex items-center gap-2 border border-[var(--border-2)] text-[var(--muted)] hover:border-[var(--muted)] hover:text-[var(--text)] transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
               style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", padding: "10px 20px" }}
             >
               <FiDownload size={12} />
@@ -176,9 +176,9 @@ export default function Hero() {
         className="absolute bottom-10 left-8 flex flex-col items-center gap-3 anim-fade-in"
         style={{ animationDelay: "1.1s" }}
       >
-        <div className="w-px h-14 bg-gradient-to-b from-[#D4A847]/30 to-transparent" />
+        <div className="w-px h-14 bg-gradient-to-b from-[var(--accent)]/30 to-transparent" />
         <span
-          className="text-[#6A6670] text-[9px] tracking-[0.3em] uppercase -rotate-90 mt-2"
+          className="text-[var(--dim)] text-[9px] tracking-[0.3em] uppercase -rotate-90 mt-2"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           Scroll
@@ -190,8 +190,8 @@ export default function Hero() {
         style={{ opacity: copied ? 1 : 0, transform: `translateX(-50%) translateY(${copied ? "0" : "8px"})` }}
       >
         <div
-          className="flex items-center gap-2 px-4 py-2.5 border border-[#D4A847]/30 bg-[#131315]"
-          style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", color: "#D4A847" }}
+          className="flex items-center gap-2 px-4 py-2.5 border border-[var(--accent)]/30 bg-[var(--surface)]"
+          style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.15em", color: "var(--accent)" }}
         >
           <FiCheck size={10} />
           EMAIL COPIED TO CLIPBOARD

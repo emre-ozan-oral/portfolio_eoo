@@ -4,11 +4,39 @@
   --bg: #0C0C0D;
   --surface: #131315;
   --border: #1D1D21;
+  --border-2: #2A2A2F;
   --text: #EDE9E0;
   --muted: #8C8894;    /* body copy — ~5.6:1 on --bg, meets WCAG AA */
   --dim: #6A6670;      /* secondary labels (dates, chips) — ~3.5:1 on --bg */
   --accent: #D4A847;
   --accent-dim: rgba(212, 168, 71, 0.08);
+
+  /* Project-tag accents */
+  --tag-work: #7EB8D4;
+  --tag-personal: #7ED4A8;
+  --tag-academic: #A9A4B3;
+
+  color-scheme: dark;
+}
+
+/* ── Light theme ──────────────────────────
+   Toggled by data-theme="light" on <html>.  */
+[data-theme="light"] {
+  --bg: #FAF7F2;
+  --surface: #FFFFFF;
+  --border: #E7E1D4;
+  --border-2: #D8D0BE;
+  --text: #1C1A17;
+  --muted: #55504A;    /* ~7.5:1 on --bg */
+  --dim: #7A7468;      /* ~4.3:1 on --bg */
+  --accent: #9C6B0F;   /* darkened gold — ~4.6:1 on --bg, still reads as yellow/gold */
+  --accent-dim: rgba(156, 107, 15, 0.08);
+
+  --tag-work: #2E6E96;
+  --tag-personal: #2F7D53;
+  --tag-academic: #6B6478;
+
+  color-scheme: light;
 }
 
 @theme inline {
@@ -18,6 +46,10 @@
   --font-mono: var(--font-mono);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
@@ -25,9 +57,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Subtle grain overlay */
+/* Subtle grain overlay (dark only — reads as noise on light bg otherwise) */
 body::after {
   content: '';
   position: fixed;
@@ -38,18 +71,20 @@ body::after {
   z-index: 9999;
 }
 
+[data-theme="light"] body::after {
+  opacity: 0.015;
+}
+
 /* Selection */
 ::selection {
-  background: rgba(212, 168, 71, 0.25);
-  color: #EDE9E0;
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  color: var(--text);
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: rgba(212, 168, 71, 0.35); border-radius: 2px; }
-
-html { scroll-behavior: smooth; }
+::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--accent) 35%, transparent); border-radius: 2px; }
 
 /* ── Load animations ─────────────────────── */
 @keyframes fadeUp {
@@ -81,4 +116,16 @@ html { scroll-behavior: smooth; }
 .reveal.in-view {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ── Accent rule ──────────────────────────
+   Thin gold divider used under section headers. */
+.accent-rule {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--accent) 55%, transparent),
+    var(--border) 55%
+  );
 }

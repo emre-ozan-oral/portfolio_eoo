@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FiMenu, FiX } from "react-icons/fi";
+import ThemeToggle from "./ThemeToggle";
 
 const sectionLinks = [
   { label: "Experience", href: "#experience" },
@@ -34,22 +35,27 @@ export default function Nav() {
   }));
 
   const linkClass =
-    "text-[11px] tracking-[0.18em] uppercase text-[#8C8894] hover:text-[#EDE9E0] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2";
+    "text-[11px] tracking-[0.18em] uppercase text-[var(--muted)] hover:text-[var(--text)] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2";
   const mobileLinkClass =
-    "text-[13px] tracking-[0.18em] uppercase text-[#8C8894] hover:text-[#EDE9E0] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2";
+    "text-[13px] tracking-[0.18em] uppercase text-[var(--muted)] hover:text-[var(--text)] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2";
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled || open
-          ? "bg-[#0C0C0D]/95 backdrop-blur-xl border-b border-[#1D1D21]"
+          ? "bg-[var(--bg)]/95 backdrop-blur-xl border-b border-[var(--border)]"
           : "bg-transparent"
       }`}
     >
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none"
+        style={{ background: "linear-gradient(to right, transparent, var(--accent), transparent)" }}
+        aria-hidden
+      />
       <div className="max-w-6xl mx-auto px-8 py-5 flex items-center justify-between">
         <Link
           href="/"
-          className="text-[#D4A847] text-base transition-opacity hover:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-4"
+          className="text-[var(--accent)] text-base transition-opacity hover:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-4"
           style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic" }}
           onClick={() => setOpen(false)}
         >
@@ -67,7 +73,7 @@ export default function Nav() {
           <li>
             <Link
               href={gameLink.href}
-              className={`${linkClass} ${pathname === gameLink.href ? "text-[#D4A847]" : ""}`}
+              className={`${linkClass} ${pathname === gameLink.href ? "text-[var(--accent)]" : ""}`}
               style={{ fontFamily: "var(--font-mono)" }}
             >
               {gameLink.label}
@@ -75,19 +81,23 @@ export default function Nav() {
           </li>
         </ul>
 
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          className="sm:hidden text-[#EDE9E0] p-1 -mr-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4A847] focus-visible:outline-offset-2"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-        >
-          {open ? <FiX size={20} /> : <FiMenu size={20} />}
-        </button>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="sm:hidden text-[var(--text)] p-1 -mr-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+          >
+            {open ? <FiX size={20} /> : <FiMenu size={20} />}
+          </button>
+        </div>
       </div>
 
       {open && (
-        <div className="sm:hidden border-t border-[#1D1D21] px-8 py-6">
+        <div className="sm:hidden border-t border-[var(--border)] px-8 py-6">
           <ul className="flex flex-col gap-5">
             {resolvedSectionLinks.map((link) => (
               <li key={link.href}>
@@ -105,7 +115,7 @@ export default function Nav() {
               <Link
                 href={gameLink.href}
                 onClick={() => setOpen(false)}
-                className={`${mobileLinkClass} ${pathname === gameLink.href ? "text-[#D4A847]" : ""}`}
+                className={`${mobileLinkClass} ${pathname === gameLink.href ? "text-[var(--accent)]" : ""}`}
                 style={{ fontFamily: "var(--font-mono)" }}
               >
                 {gameLink.label}

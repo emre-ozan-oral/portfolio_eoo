@@ -5,15 +5,18 @@ import { education, activities, interests } from "@/data/content";
 
 function SectionHeader({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-5">
-      <span
-        className="text-[#D4A847] text-[11px] tracking-[0.35em] uppercase"
-        style={{ fontFamily: "var(--font-mono)" }}
-      >——</span>
-      <h2
-        className="text-[28px] text-[#EDE9E0]"
-        style={{ fontFamily: "var(--font-playfair)", fontWeight: 600 }}
-      >{label}</h2>
+    <div>
+      <div className="flex items-center gap-5">
+        <span
+          className="text-[var(--accent)] text-[11px] tracking-[0.35em] uppercase"
+          style={{ fontFamily: "var(--font-mono)" }}
+        >——</span>
+        <h2
+          className="text-[28px] text-[var(--text)]"
+          style={{ fontFamily: "var(--font-playfair)", fontWeight: 600 }}
+        >{label}</h2>
+      </div>
+      <div className="accent-rule mt-5" />
     </div>
   );
 }
@@ -24,7 +27,7 @@ export default function Education() {
   return (
     <section id="education" className="py-32 px-8 max-w-6xl mx-auto relative overflow-hidden">
       <div
-        className="absolute -top-6 right-0 select-none pointer-events-none leading-none text-[#EDE9E0] opacity-[0.03]"
+        className="absolute -top-6 right-0 select-none pointer-events-none leading-none text-[var(--text)] opacity-[0.03]"
         style={{ fontFamily: "var(--font-playfair)", fontSize: "clamp(160px,22vw,260px)", fontWeight: 700 }}
         aria-hidden
       >04</div>
@@ -38,22 +41,23 @@ export default function Education() {
           {education.map((edu, idx) => (
             <div
               key={edu.school}
-              className={`reveal${visible ? " in-view" : ""} p-8 border border-[#1D1D21] bg-[#131315]/40 hover:border-[#D4A847]/20 hover:bg-[#131315] transition-all duration-300`}
+              className={`reveal${visible ? " in-view" : ""} group relative p-8 border border-[var(--border)] bg-[var(--surface)]/40 hover:border-[var(--accent)]/20 hover:bg-[var(--surface)] transition-all duration-300`}
               style={{ transitionDelay: `${idx * 80}ms` }}
             >
+              <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-[var(--accent)] opacity-30 group-hover:opacity-100 transition-opacity duration-300" />
               <h3
-                className="text-[#EDE9E0] text-xl mb-2"
+                className="text-[var(--text)] text-xl mb-2"
                 style={{ fontFamily: "var(--font-playfair)", fontWeight: 600 }}
               >{edu.school}</h3>
-              <p className="text-[#8C8894] text-[13px] mb-3">{edu.degree}</p>
+              <p className="text-[var(--muted)] text-[13px] mb-3">{edu.degree}</p>
               {edu.period && (
                 <p
-                  className="text-[#6A6670] text-[10px] tracking-[0.12em] mb-4"
+                  className="text-[var(--dim)] text-[10px] tracking-[0.12em] mb-4"
                   style={{ fontFamily: "var(--font-mono)" }}
                 >{edu.period}</p>
               )}
               <span
-                className="text-[#D4A847] text-[9px] tracking-[0.2em] uppercase border border-[#D4A847]/30 px-3 py-1.5"
+                className="text-[var(--accent)] text-[9px] tracking-[0.2em] uppercase border border-[var(--accent)]/30 px-3 py-1.5"
                 style={{ fontFamily: "var(--font-mono)" }}
               >{edu.note}</span>
             </div>
@@ -66,13 +70,13 @@ export default function Education() {
         >
           <div>
             <h3
-              className="text-[#D4A847] text-[10px] tracking-[0.35em] uppercase mb-7"
+              className="text-[var(--accent)] text-[10px] tracking-[0.35em] uppercase mb-7"
               style={{ fontFamily: "var(--font-mono)" }}
             >Activities</h3>
             <ul className="space-y-3.5">
               {activities.map((a) => (
-                <li key={a} className="flex gap-4 text-[#8C8894] text-[13px] leading-relaxed">
-                  <span className="text-[#D4A847]/40 shrink-0 mt-px">—</span>
+                <li key={a} className="flex gap-4 text-[var(--muted)] text-[13px] leading-relaxed">
+                  <span className="text-[var(--accent)]/40 shrink-0 mt-px">—</span>
                   {a}
                 </li>
               ))}
@@ -80,14 +84,14 @@ export default function Education() {
           </div>
           <div>
             <h3
-              className="text-[#D4A847] text-[10px] tracking-[0.35em] uppercase mb-7"
+              className="text-[var(--accent)] text-[10px] tracking-[0.35em] uppercase mb-7"
               style={{ fontFamily: "var(--font-mono)" }}
             >Interests</h3>
             <div className="flex flex-wrap gap-2">
               {interests.map((i) => (
                 <span
                   key={i}
-                  className="text-[10px] tracking-[0.1em] px-3 py-1.5 border border-[#1D1D21] text-[#6A6670] hover:text-[#8C8894] hover:border-[#6A6670] transition-colors duration-150"
+                  className="text-[10px] tracking-[0.1em] px-3 py-1.5 border border-[var(--border)] text-[var(--dim)] hover:text-[var(--muted)] hover:border-[var(--dim)] transition-colors duration-150"
                   style={{ fontFamily: "var(--font-mono)" }}
                 >{i}</span>
               ))}
