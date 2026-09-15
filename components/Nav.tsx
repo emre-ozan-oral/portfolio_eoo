@@ -13,7 +13,10 @@ const sectionLinks = [
   { label: "Education",  href: "#education" },
 ];
 
-const gameLink = { label: "Sudoku", href: "/sudoku" };
+const gameLinks = [
+  { label: "Sudoku", href: "/sudoku" },
+  { label: "Minesweeper", href: "/minesweeper" },
+];
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -70,15 +73,17 @@ export default function Nav() {
               </a>
             </li>
           ))}
-          <li>
-            <Link
-              href={gameLink.href}
-              className={`${linkClass} ${pathname === gameLink.href ? "text-[var(--accent)]" : ""}`}
-              style={{ fontFamily: "var(--font-mono)" }}
-            >
-              {gameLink.label}
-            </Link>
-          </li>
+          {gameLinks.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className={`${linkClass} ${pathname === link.href ? "text-[var(--accent)]" : ""}`}
+                style={{ fontFamily: "var(--font-mono)" }}
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
         </ul>
 
         <div className="flex items-center gap-4">
@@ -111,16 +116,18 @@ export default function Nav() {
                 </a>
               </li>
             ))}
-            <li>
-              <Link
-                href={gameLink.href}
-                onClick={() => setOpen(false)}
-                className={`${mobileLinkClass} ${pathname === gameLink.href ? "text-[var(--accent)]" : ""}`}
-                style={{ fontFamily: "var(--font-mono)" }}
-              >
-                {gameLink.label}
-              </Link>
-            </li>
+            {gameLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className={`${mobileLinkClass} ${pathname === link.href ? "text-[var(--accent)]" : ""}`}
+                  style={{ fontFamily: "var(--font-mono)" }}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       )}
