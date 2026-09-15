@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import MinesweeperGame from "@/components/minesweeper/MinesweeperGame";
+import MinesweeperTabs from "@/components/minesweeper/MinesweeperTabs";
 
 export const metadata: Metadata = {
   title: "Minesweeper – Emre Ozan Oral",
@@ -30,10 +30,12 @@ export default function MinesweeperPage() {
           </div>
           <p className="text-[var(--dim)] text-[13px] tracking-wide mb-14 max-w-md">
             A small side project — classic Minesweeper with beginner, intermediate, and
-            expert boards. Click to clear, right-click (or Flag mode) to flag.
+            expert boards. Click to clear, right-click (or Flag mode) to flag. Switch to
+            &quot;Watch solver&quot; to see a constraint-satisfaction solver play a board from
+            scratch, with its reasoning highlighted step by step.
           </p>
 
-          <MinesweeperGame />
+          <MinesweeperTabs />
         </div>
       </main>
       <Footer />

@@ -15,6 +15,7 @@ import {
   checkWin,
   formatTime,
 } from "./minesweeperEngine";
+import MinesweeperBoard from "./MinesweeperBoard";
 
 type Status = "loading" | "playing" | "won" | "lost" | "revealed";
 
@@ -48,19 +49,6 @@ const CELL_PX: Record<Difficulty, number> = {
   beginner: 38,
   intermediate: 30,
   expert: 22,
-};
-
-// Classic Minesweeper adjacency-count colors, reusing the site's palette
-// where it already has a matching hue.
-const NUMBER_COLORS: Record<number, string> = {
-  1: "var(--tag-work)",
-  2: "var(--tag-personal)",
-  3: "var(--error)",
-  4: "#B48EAD",
-  5: "#C97B4A",
-  6: "#4FBDBD",
-  7: "var(--text)",
-  8: "var(--muted)",
 };
 
 const INITIAL_STATE: GameState = {
@@ -297,54 +285,14 @@ export default function MinesweeperGame() {
 
       {/* Board */}
       <div className="relative max-w-full overflow-x-auto">
-        <div
-          className={`inline-grid border-2 border-[var(--accent)]/40 bg-[var(--surface)] select-none ${
-            ended ? "opacity-90" : ""
-          }`}
-          style={{ gridTemplateColumns: `repeat(${cols}, ${cellPx}px)` }}
-        >
-          {board.map((row, r) =>
-            row.map((cell, c) => {
-              const showMine = cell.revealed && cell.mine;
-              return (
-                <button
-                  key={`${r}-${c}`}
-                  type="button"
-                  onClick={() => status === "playing" && handleCellClick(r, c)}
-                  onContextMenu={(e) => status === "playing" && handleCellContextMenu(e, r, c)}
-                  className={`
-                    flex items-center justify-center border-[0.5px] border-[var(--border)]
-                    transition-colors duration-150
-                    ${cell.revealed ? "bg-transparent" : "bg-white/[0.03] hover:bg-white/[0.06]"}
-                    ${showMine ? "bg-[var(--error)]/20" : ""}
-                  `}
-                  style={{
-                    width: cellPx,
-                    height: cellPx,
-                    fontFamily: "var(--font-mono)",
-                    fontSize: Math.max(10, Math.floor(cellPx * 0.45)),
-                    fontWeight: 600,
-                    color: cell.revealed && !cell.mine ? NUMBER_COLORS[cell.adjacent] : undefined,
-                    cursor: status === "playing" ? "pointer" : "default",
-                  }}
-                  aria-label={`Row ${r + 1}, column ${c + 1}${
-                    cell.flagged ? ", flagged" : cell.revealed ? (cell.mine ? ", mine" : `, ${cell.adjacent}`) : ""
-                  }`}
-                >
-                  {cell.revealed
-                    ? cell.mine
-                      ? "✹"
-                      : cell.adjacent > 0
-                        ? cell.adjacent
-                        : ""
-                    : cell.flagged
-                      ? "⚑"
-                      : ""}
-                </button>
-              );
-            })
-          )}
-        </div>
+        <MinesweeperBoard
+          board={board}
+          cellPx={cellPx}
+          interactive={status === "playing"}
+          onCellClick={handleCellClick}
+          onCellContextMenu={handleCellContextMenu}
+          dimmed={ended}
+        />
 
         {(status === "won" || status === "lost" || status === "revealed") && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm">
