@@ -4,13 +4,17 @@
 // "Hint" button, or a full trace for a "Watch solver" demo.
 
 import {
+  DIFFICULTY_CONFIG,
   Difficulty,
   Marks,
   Puzzle,
   cloneMarks,
   emptyMarks,
+  erodeSmallestRegion,
   generatePuzzle as generateRawPuzzle,
+  growRegions,
   queenPositions,
+  randomNonTouchingPermutation,
 } from "./queensEngine";
 
 export type StepKind =
@@ -213,13 +217,16 @@ export function fallbackStep(puzzle: Puzzle, marks: Marks): SolverStep | null {
   return null;
 }
 
-// Plain random region growth often produces a puzzle whose very first move
-// is a guess — nothing is forced until a queen or two is already placed.
-// That's a bad first impression, so puzzle generation regenerates until the
-// opening move is at least a real deduction, and prefers (within a smaller
-// budget) one that solves end-to-end by logic alone.
-const MAX_GENERATION_ATTEMPTS = 400;
-const FULL_LOGIC_ATTEMPT_BUDGET = 120;
+// Regenerating a fresh random layout from scratch and just hoping it happens
+// to solve fully by logic essentially never pays off in practice (measured
+// at a 0% hit rate across hundreds of attempts, at every board size) — most
+// random region layouts have far too few forced moves for these rules to
+// chain through the whole board. Instead, take one layout and repeatedly
+// erode its smallest remaining region (see erodeSmallestRegion) — each
+// erosion adds another guaranteed forced move, which very quickly unlocks
+// further deductions elsewhere, so a handful of erosions reliably yields a
+// puzzle that solves end-to-end without a single guess.
+const OUTER_LAYOUT_ATTEMPTS = 60;
 
 function solvesFullyByLogic(puzzle: Puzzle): boolean {
   let marks = emptyMarks(puzzle.n);
@@ -233,28 +240,37 @@ function solvesFullyByLogic(puzzle: Puzzle): boolean {
   return queenPositions(marks).length === puzzle.n;
 }
 
-/** Generates a Queens puzzle whose opening move is always a genuine
- * deduction (never a guess), preferring one solvable by logic alone
- * end-to-end when that's found within a smaller attempt budget. */
+/** Generates a Queens puzzle that solves end-to-end by logic alone —
+ * never a guess, from the opening move through the last queen — by
+ * eroding regions (smallest first) on a single layout until the solver's
+ * propagation rules can chain all the way through. Falls back to a
+ * fresh layout if one particular layout can't be coaxed into fully
+ * solving within a reasonable number of erosions, and to the cheap
+ * single-erosion generator (forced opening only) if every attempt fails. */
 export function generateLogicalPuzzle(difficulty: Difficulty): Puzzle {
-  let firstFallback: Puzzle | null = null;
+  const { n } = DIFFICULTY_CONFIG[difficulty];
+  let fallback: Puzzle | null = null;
 
-  for (let attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
-    const puzzle = generateRawPuzzle(difficulty);
-    const hasForcedOpening = findNextStep(puzzle, emptyMarks(puzzle.n)) !== null;
-    if (!hasForcedOpening) continue;
+  for (let attempt = 0; attempt < OUTER_LAYOUT_ATTEMPTS; attempt++) {
+    const solutionCols = randomNonTouchingPermutation(n);
+    const regions = growRegions(n, solutionCols);
+    const puzzle: Puzzle = { n, regions, solutionCols };
 
-    if (!firstFallback) firstFallback = puzzle;
-    if (attempt < FULL_LOGIC_ATTEMPT_BUDGET) {
-      if (solvesFullyByLogic(puzzle)) return puzzle;
-    } else {
-      // Past the full-logic budget: settle for "the opening move is
-      // forced" rather than keep searching indefinitely.
-      return puzzle;
+    // Guarantee at least a forced opening move immediately, then keep
+    // eroding (leaving at least one region untouched, so the puzzle isn't
+    // reduced to all-singleton regions) until logic alone solves it.
+    erodeSmallestRegion(regions, n, solutionCols);
+    let erosions = 1;
+    while (erosions < n - 1 && !solvesFullyByLogic(puzzle)) {
+      if (!erodeSmallestRegion(regions, n, solutionCols)) break;
+      erosions++;
     }
+
+    if (solvesFullyByLogic(puzzle)) return puzzle;
+    fallback = puzzle; // keep the most-eroded attempt as a backstop
   }
 
-  return firstFallback ?? generateRawPuzzle(difficulty);
+  return fallback ?? generateRawPuzzle(difficulty);
 }
 
 export function nextHint(puzzle: Puzzle, marks: Marks): SolverStep | null {

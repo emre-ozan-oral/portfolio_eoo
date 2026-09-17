@@ -34,7 +34,7 @@ function shuffledRange(n: number): number[] {
 /** A random permutation of columns, one per row, such that no two queens
  * in adjacent rows sit in adjacent columns (diagonal touch). Columns are
  * already distinct by construction, so that's the only extra check needed. */
-function randomNonTouchingPermutation(n: number): number[] {
+export function randomNonTouchingPermutation(n: number): number[] {
   for (let attempt = 0; attempt < 500; attempt++) {
     const perm = shuffledRange(n);
     let ok = true;
@@ -56,7 +56,7 @@ function randomNonTouchingPermutation(n: number): number[] {
 
 /** Grows `n` connected regions outward from the solution's queen cells
  * until every cell on the board belongs to exactly one region. */
-function growRegions(n: number, solutionCols: number[]): number[][] {
+export function growRegions(n: number, solutionCols: number[]): number[][] {
   const regions: number[][] = Array.from({ length: n }, () => Array(n).fill(-1));
   type Frontier = { r: number; c: number; region: number };
   let frontier: Frontier[] = [];
@@ -124,24 +124,33 @@ function growRegions(n: number, solutionCols: number[]): number[][] {
 
 /**
  * Plain BFS region growth almost always produces regions of similar,
- * multi-cell size — which means the very first move is essentially never
- * forced by logic (no region is down to one candidate, and none is
- * confined to a single row/column), so the player has to guess before
- * anything else. This erodes the smallest region down to just its seed
- * cell (its solution queen), reassigning its other cells outward to
- * whichever neighboring region already touches them. That single-cell
- * region is an immediate, guaranteed forced move — the region's own
- * shape is what's sacrificed, not the puzzle's solvability, since every
- * region still contains exactly its original solution queen. */
-function shrinkSmallestRegionToSeed(regions: number[][], n: number, solutionCols: number[]): void {
+ * multi-cell size — which means moves are essentially never forced by
+ * logic (no region is down to one candidate, and none is confined to a
+ * single row/column), so the player has to guess. This erodes the
+ * smallest remaining region down to just its seed cell (its solution
+ * queen), reassigning its other cells outward to whichever neighboring
+ * region already touches them. That single-cell region is an immediate,
+ * guaranteed forced move — the region's own shape is what's sacrificed,
+ * not the puzzle's solvability, since every region still contains
+ * exactly its original solution queen. Call repeatedly (skipping regions
+ * already eroded to a singleton) to ratchet up how much of the puzzle is
+ * forced; returns false once nothing eligible remains to erode. */
+export function erodeSmallestRegion(
+  regions: number[][],
+  n: number,
+  solutionCols: number[],
+  skip?: Set<number>
+): boolean {
   const counts = new Array(n).fill(0);
   for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) counts[regions[r][c]]++;
 
-  let target = 0;
-  for (let region = 1; region < n; region++) {
-    if (counts[region] < counts[target]) target = region;
+  let target = -1;
+  for (let region = 0; region < n; region++) {
+    if (skip?.has(region)) continue;
+    if (counts[region] <= 1) continue; // already a forced single-cell region
+    if (target === -1 || counts[region] < counts[target]) target = region;
   }
-  if (counts[target] <= 1) return; // already a forced single-cell region
+  if (target === -1) return false;
 
   const seed: [number, number] = [target, solutionCols[target]];
   const dirs = [
@@ -175,13 +184,19 @@ function shrinkSmallestRegionToSeed(regions: number[][], n: number, solutionCols
       }
     }
   }
+  return true;
 }
 
+/** Cheap, single-erosion generator: guarantees only the opening move is
+ * forced. `generateLogicalPuzzle` in solver.ts builds on this with
+ * repeated erosion to guarantee the whole puzzle solves by logic; this
+ * raw version stays here as its lightweight fallback and for callers that
+ * don't need that stronger guarantee. */
 export function generatePuzzle(difficulty: Difficulty): Puzzle {
   const { n } = DIFFICULTY_CONFIG[difficulty];
   const solutionCols = randomNonTouchingPermutation(n);
   const regions = growRegions(n, solutionCols);
-  shrinkSmallestRegionToSeed(regions, n, solutionCols);
+  erodeSmallestRegion(regions, n, solutionCols);
   return { n, regions, solutionCols };
 }
 
