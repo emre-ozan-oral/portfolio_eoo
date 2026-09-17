@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FiZap, FiRefreshCw, FiCornerUpLeft, FiRotateCcw } from "react-icons/fi";
 import { SOLVER_ENABLED } from "../gameConfig";
 import {
@@ -33,21 +33,36 @@ export default function ZipGame() {
   const [difficulty, setDifficulty] = useState<Difficulty>("small");
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [path, setPath] = useState<Cell[]>([]);
+  // Mirrors `path` synchronously. A hold-and-drag can fire several cell
+  // events within a single native pointer event (the drag's start cell,
+  // then wherever it moved to); handleCellClick needs the *result* of the
+  // first of those to validate the second, but the `path` state variable
+  // itself won't reflect that update until React re-renders — reading and
+  // writing this ref instead keeps every call within the same gesture
+  // consistent, even back-to-back before a render happens.
+  const pathRef = useRef<Cell[]>([]);
+  const applyPath = useCallback((next: Cell[]) => {
+    pathRef.current = next;
+    setPath(next);
+  }, []);
   const [won, setWon] = useState(false);
   const [hintMessage, setHintMessage] = useState<string | null>(null);
   const [hintCell, setHintCell] = useState<[number, number] | null>(null);
   const [cooldownUntil, setCooldownUntil] = useState(0);
   const [now, setNow] = useState(0);
 
-  const newGame = useCallback((nextDifficulty: Difficulty) => {
-    setDifficulty(nextDifficulty);
-    setPuzzle(generatePuzzle(nextDifficulty));
-    setPath([]);
-    setWon(false);
-    setHintMessage(null);
-    setHintCell(null);
-    setCooldownUntil(0);
-  }, []);
+  const newGame = useCallback(
+    (nextDifficulty: Difficulty) => {
+      setDifficulty(nextDifficulty);
+      setPuzzle(generatePuzzle(nextDifficulty));
+      applyPath([]);
+      setWon(false);
+      setHintMessage(null);
+      setHintCell(null);
+      setCooldownUntil(0);
+    },
+    [applyPath]
+  );
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -67,49 +82,51 @@ export default function ZipGame() {
   const handleCellClick = useCallback(
     (r: number, c: number) => {
       if (!puzzle || won) return;
+      const prevPath = pathRef.current;
 
       // Dragging (or tapping) back onto the second-to-last cell retreats
       // the path by one step — lets a hold-and-drag double as an undo
       // gesture without lifting the pointer.
-      if (path.length >= 2) {
-        const [pr, pc] = path[path.length - 2];
+      if (prevPath.length >= 2) {
+        const [pr, pc] = prevPath[prevPath.length - 2];
         if (pr === r && pc === c) {
-          setPath(path.slice(0, -1));
+          applyPath(prevPath.slice(0, -1));
           setHintMessage(null);
           setHintCell(null);
           return;
         }
       }
 
-      if (locked) return;
-      if (!isValidMove(puzzle, path, [r, c])) return;
-      const nextPath: Cell[] = [...path, [r, c]];
-      setPath(nextPath);
+      const isLocked = prevPath.length > 0 && highestNumberOnPath(puzzle, prevPath) === puzzle.maxNumber;
+      if (isLocked) return;
+      if (!isValidMove(puzzle, prevPath, [r, c])) return;
+      const nextPath: Cell[] = [...prevPath, [r, c]];
+      applyPath(nextPath);
       setHintMessage(null);
       setHintCell(null);
       if (isWinningPath(puzzle, nextPath)) setWon(true);
     },
-    [puzzle, path, won, locked]
+    [puzzle, won, applyPath]
   );
 
   const handleUndo = useCallback(() => {
     if (won) return;
-    setPath((p) => p.slice(0, -1));
+    applyPath(pathRef.current.slice(0, -1));
     setHintMessage(null);
     setHintCell(null);
-  }, [won]);
+  }, [won, applyPath]);
 
   const handleHint = useCallback(() => {
     if (!puzzle || won || onCooldown) return;
-    const step = nextHint(puzzle, path);
+    const step = nextHint(puzzle, pathRef.current);
     if (!step) return;
-    setPath(step.path);
+    applyPath(step.path);
     setHintMessage(step.message);
     setHintCell(step.path[step.path.length - 1]);
     setCooldownUntil(Date.now() + HINT_COOLDOWN_MS);
     setNow(Date.now());
     if (isWinningPath(puzzle, step.path)) setWon(true);
-  }, [puzzle, path, won, onCooldown]);
+  }, [puzzle, won, onCooldown, applyPath]);
 
   if (!puzzle) {
     return (

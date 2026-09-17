@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FiZap, FiRefreshCw, FiRotateCcw } from "react-icons/fi";
 import { SOLVER_ENABLED } from "../gameConfig";
 import {
@@ -34,23 +34,43 @@ export default function WendGame() {
   const [difficulty, setDifficulty] = useState<Difficulty>("small");
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [selection, setSelection] = useState<Cell[]>([]);
+  // Mirrors `selection`/`solvedIds` synchronously. A hold-and-drag can fire
+  // several cell events within a single native pointer event (the drag's
+  // start cell, then wherever it moved to); handleCellClick needs the
+  // *result* of the first of those to validate the second, but the state
+  // variables themselves won't reflect that update until React re-renders
+  // -- reading and writing these refs instead keeps every call within the
+  // same gesture consistent, even back-to-back before a render happens.
+  const selectionRef = useRef<Cell[]>([]);
+  const applySelection = useCallback((next: Cell[]) => {
+    selectionRef.current = next;
+    setSelection(next);
+  }, []);
   const [solvedIds, setSolvedIds] = useState<Set<number>>(new Set());
+  const solvedIdsRef = useRef<Set<number>>(new Set());
+  const applySolvedIds = useCallback((next: Set<number>) => {
+    solvedIdsRef.current = next;
+    setSolvedIds(next);
+  }, []);
   const [revealed, setRevealed] = useState<Record<number, number>>({});
   const [won, setWon] = useState(false);
   const [hintMessage, setHintMessage] = useState<string | null>(null);
   const [cooldownUntil, setCooldownUntil] = useState(0);
   const [now, setNow] = useState(0);
 
-  const newGame = useCallback((nextDifficulty: Difficulty) => {
-    setDifficulty(nextDifficulty);
-    setPuzzle(generatePuzzle(nextDifficulty));
-    setSelection([]);
-    setSolvedIds(new Set());
-    setRevealed({});
-    setWon(false);
-    setHintMessage(null);
-    setCooldownUntil(0);
-  }, []);
+  const newGame = useCallback(
+    (nextDifficulty: Difficulty) => {
+      setDifficulty(nextDifficulty);
+      setPuzzle(generatePuzzle(nextDifficulty));
+      applySelection([]);
+      applySolvedIds(new Set());
+      setRevealed({});
+      setWon(false);
+      setHintMessage(null);
+      setCooldownUntil(0);
+    },
+    [applySelection, applySolvedIds]
+  );
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -70,22 +90,24 @@ export default function WendGame() {
     (r: number, c: number) => {
       if (!puzzle || won) return;
       if (puzzle.letters[r][c] === null) return;
+      const currentSolved = solvedIdsRef.current;
       const wid = wordIdAtCell(puzzle.words, r, c);
-      if (wid !== undefined && solvedIds.has(wid)) return;
+      if (wid !== undefined && currentSolved.has(wid)) return;
 
+      const currentSelection = selectionRef.current;
       let nextSelection: Cell[];
-      if (selection.length === 0) {
+      if (currentSelection.length === 0) {
         nextSelection = [[r, c]];
       } else {
-        const last = selection[selection.length - 1];
+        const last = currentSelection[currentSelection.length - 1];
         if (last[0] === r && last[1] === c) {
-          nextSelection = selection.slice(0, -1);
+          nextSelection = currentSelection.slice(0, -1);
         } else {
-          const idx = selection.findIndex(([sr, sc]) => sr === r && sc === c);
+          const idx = currentSelection.findIndex(([sr, sc]) => sr === r && sc === c);
           if (idx !== -1) {
-            nextSelection = selection.slice(0, idx + 1);
+            nextSelection = currentSelection.slice(0, idx + 1);
           } else if (areOrthogonallyAdjacent(last, [r, c])) {
-            nextSelection = [...selection, [r, c]];
+            nextSelection = [...currentSelection, [r, c]];
           } else {
             nextSelection = [[r, c]];
           }
@@ -93,23 +115,23 @@ export default function WendGame() {
       }
 
       setHintMessage(null);
-      const matched = puzzle.words.find((w) => !solvedIds.has(w.id) && selectionMatchesWord(nextSelection, w));
+      const matched = puzzle.words.find((w) => !currentSolved.has(w.id) && selectionMatchesWord(nextSelection, w));
       if (matched) {
-        const nextSolved = new Set(solvedIds);
+        const nextSolved = new Set(currentSolved);
         nextSolved.add(matched.id);
-        setSolvedIds(nextSolved);
-        setSelection([]);
+        applySolvedIds(nextSolved);
+        applySelection([]);
         if (allWordsSolved(puzzle, nextSolved)) setWon(true);
       } else {
-        setSelection(nextSelection);
+        applySelection(nextSelection);
       }
     },
-    [puzzle, won, selection, solvedIds]
+    [puzzle, won, applySelection, applySolvedIds]
   );
 
   const handleHint = useCallback(() => {
     if (!puzzle || won || onCooldown) return;
-    const step = nextHint(puzzle, solvedIds, revealed);
+    const step = nextHint(puzzle, solvedIdsRef.current, revealed);
     if (!step) return;
 
     setRevealed((prev) => ({ ...prev, [step.wordId]: (prev[step.wordId] ?? 0) + 1 }));
@@ -118,13 +140,13 @@ export default function WendGame() {
     setNow(Date.now());
 
     if (step.completesWord) {
-      const nextSolved = new Set(solvedIds);
+      const nextSolved = new Set(solvedIdsRef.current);
       nextSolved.add(step.wordId);
-      setSolvedIds(nextSolved);
-      setSelection((sel) => sel.filter(([r, c]) => wordIdAtCell(puzzle.words, r, c) !== step.wordId));
+      applySolvedIds(nextSolved);
+      applySelection(selectionRef.current.filter(([r, c]) => wordIdAtCell(puzzle.words, r, c) !== step.wordId));
       if (allWordsSolved(puzzle, nextSolved)) setWon(true);
     }
-  }, [puzzle, won, onCooldown, solvedIds, revealed]);
+  }, [puzzle, won, onCooldown, revealed, applySolvedIds, applySelection]);
 
   if (!puzzle) {
     return (
@@ -212,7 +234,7 @@ export default function WendGame() {
       <div className="flex flex-wrap items-center justify-center gap-3">
         <button
           type="button"
-          onClick={() => setSelection([])}
+          onClick={() => applySelection([])}
           disabled={selection.length === 0 || won}
           className="flex items-center gap-2 px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase text-[var(--muted)] border border-[var(--border)] hover:text-[var(--text)] hover:border-[var(--muted)]/40 transition-colors duration-200 disabled:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
           style={{ fontFamily: "var(--font-mono)" }}
