@@ -128,6 +128,37 @@ export function revealAllMines(board: Board): Board {
   return next;
 }
 
+/**
+ * "Chording": clicking a revealed number whose flagged-neighbor count
+ * already matches its own number reveals the rest of its hidden,
+ * unflagged neighbors at once — the classic Minesweeper shortcut for
+ * clearing cells you've already worked out are safe. Returns the empty
+ * list when the cell isn't eligible (unrevealed, blank, a mine, or its
+ * flag count doesn't match yet).
+ */
+export function chordTargets(board: Board, r: number, c: number): [number, number][] {
+  const rows = board.length;
+  const cols = board[0].length;
+  const cell = board[r][c];
+  if (!cell.revealed || cell.mine || cell.adjacent === 0) return [];
+
+  const neighbors = neighborsOf(r, c, rows, cols);
+  const flagged = neighbors.filter(([nr, nc]) => board[nr][nc].flagged).length;
+  if (flagged !== cell.adjacent) return [];
+
+  return neighbors.filter(([nr, nc]) => !board[nr][nc].revealed && !board[nr][nc].flagged);
+}
+
+/** Reveals every chord target for (r, c). If a flag was wrong, this can
+ * reveal a mine — same risk as the real shortcut takes. */
+export function chordReveal(board: Board, r: number, c: number): Board {
+  let next = board;
+  for (const [nr, nc] of chordTargets(board, r, c)) {
+    if (!next[nr][nc].revealed) next = revealCell(next, nr, nc);
+  }
+  return next;
+}
+
 export function toggleFlag(board: Board, r: number, c: number): Board {
   const next = cloneBoard(board);
   if (next[r][c].revealed) return next;

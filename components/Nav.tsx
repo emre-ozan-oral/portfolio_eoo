@@ -16,6 +16,9 @@ const sectionLinks = [
 const gameLinks = [
   { label: "Sudoku", href: "/sudoku" },
   { label: "Minesweeper", href: "/minesweeper" },
+  { label: "Queens", href: "/queens" },
+  { label: "Zip", href: "/zip" },
+  { label: "Wend", href: "/wend" },
 ];
 
 export default function Nav() {

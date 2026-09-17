@@ -10,6 +10,8 @@ import {
   emptyBoard,
   revealCell,
   revealAllMines,
+  chordTargets,
+  chordReveal,
   toggleFlag,
   countFlags,
   checkWin,
@@ -135,7 +137,21 @@ export default function MinesweeperGame() {
     (r: number, c: number) => {
       if (status !== "playing") return;
       setGame((g) => {
-        if (g.board[r][c].flagged || g.board[r][c].revealed) return g;
+        if (g.board[r][c].flagged) return g;
+
+        // Clicking an already-revealed number "chords" it: if its flagged
+        // neighbors already match its count, reveal the rest of them.
+        if (g.board[r][c].revealed) {
+          const targets = chordTargets(g.board, r, c);
+          if (targets.length === 0) return g;
+
+          const hitMine = targets.some(([tr, tc]) => g.board[tr][tc].mine);
+          const chordedBoard = chordReveal(g.board, r, c);
+          if (hitMine) {
+            return { ...g, board: revealAllMines(chordedBoard), status: "lost" };
+          }
+          return { ...g, board: chordedBoard, status: checkWin(chordedBoard) ? "won" : g.status };
+        }
 
         let nextBoard = g.board;
         let firstClickDone = g.firstClickDone;
@@ -178,10 +194,16 @@ export default function MinesweeperGame() {
 
   const handleCellClick = useCallback(
     (r: number, c: number) => {
+      // A revealed number can always be chorded, regardless of flag mode —
+      // flagging an already-revealed cell would be a no-op anyway.
+      if (board[r][c].revealed) {
+        handleReveal(r, c);
+        return;
+      }
       if (flagMode) handleFlag(r, c);
       else handleReveal(r, c);
     },
-    [flagMode, handleFlag, handleReveal]
+    [flagMode, handleFlag, handleReveal, board]
   );
 
   const handleCellContextMenu = useCallback(
@@ -366,7 +388,8 @@ export default function MinesweeperGame() {
         className="text-[var(--dim)] text-[10px] tracking-[0.1em] text-center max-w-xs"
         style={{ fontFamily: "var(--font-mono)" }}
       >
-        Right-click to flag on desktop, or toggle Flag mode on touch devices.
+        Right-click to flag on desktop, or toggle Flag mode on touch devices. Click a revealed
+        number once you&apos;ve flagged all its mines to reveal the rest of its neighbors at once.
       </p>
     </div>
   );
