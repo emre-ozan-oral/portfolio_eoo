@@ -129,12 +129,13 @@ export function revealAllMines(board: Board): Board {
 }
 
 /**
- * "Chording": clicking a revealed number whose flagged-neighbor count
- * already matches its own number reveals the rest of its hidden,
- * unflagged neighbors at once — the classic Minesweeper shortcut for
- * clearing cells you've already worked out are safe. Returns the empty
- * list when the cell isn't eligible (unrevealed, blank, a mine, or its
- * flag count doesn't match yet).
+ * "Chording": clicking a revealed number reveals the rest of its hidden,
+ * unflagged neighbors at once. Unlike the classic desktop shortcut, this
+ * doesn't require the flagged-neighbor count to already match the number
+ * first — you can chord a number you're not fully sure about, at the risk
+ * of opening a mine if a flag was missing or wrong. Returns the empty list
+ * only when the cell isn't eligible at all (unrevealed, blank, a mine, or
+ * every neighbor is already revealed/flagged).
  */
 export function chordTargets(board: Board, r: number, c: number): [number, number][] {
   const rows = board.length;
@@ -143,9 +144,6 @@ export function chordTargets(board: Board, r: number, c: number): [number, numbe
   if (!cell.revealed || cell.mine || cell.adjacent === 0) return [];
 
   const neighbors = neighborsOf(r, c, rows, cols);
-  const flagged = neighbors.filter(([nr, nc]) => board[nr][nc].flagged).length;
-  if (flagged !== cell.adjacent) return [];
-
   return neighbors.filter(([nr, nc]) => !board[nr][nc].revealed && !board[nr][nc].flagged);
 }
 

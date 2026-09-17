@@ -19,9 +19,9 @@ const SPEEDS = [
 ] as const;
 
 const CELL_PX: Record<Difficulty, number> = {
-  small: 58,
-  medium: 50,
-  large: 44,
+  small: 54,
+  medium: 46,
+  large: 40,
 };
 
 const KIND_LABEL: Record<SolverStep["kind"], string> = {
@@ -140,7 +140,7 @@ export default function SolverView() {
           />
 
           {atEnd && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm anim-fade-in">
               <p
                 className="text-2xl"
                 style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontWeight: 600, color: "var(--accent)" }}

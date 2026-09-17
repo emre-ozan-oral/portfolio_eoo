@@ -1,18 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FiZap, FiRefreshCw } from "react-icons/fi";
+import { SOLVER_ENABLED } from "../gameConfig";
 import {
   Difficulty,
+  Mark,
   Marks,
   Puzzle,
   cycleMark,
+  setMark,
   emptyMarks,
   findConflicts,
   checkWin,
-  generatePuzzle,
 } from "./queensEngine";
-import { nextHint } from "./solver";
+import { nextHint, generateLogicalPuzzle } from "./solver";
 import QueensBoard, { CellHighlight } from "./QueensBoard";
 
 const DIFFICULTIES: { key: Difficulty; label: string }[] = [
@@ -40,14 +42,20 @@ export default function QueensGame() {
   const [now, setNow] = useState(0);
 
   const newGame = useCallback((nextDifficulty: Difficulty) => {
-    const p = generatePuzzle(nextDifficulty);
     setDifficulty(nextDifficulty);
-    setPuzzle(p);
-    setMarks(emptyMarks(p.n));
+    setPuzzle(null);
     setWon(false);
     setHintMessage(null);
     setHintHighlights({});
     setCooldownUntil(0);
+    // Defer so the "Growing regions…" state paints before the synchronous,
+    // now-heavier generation (it retries until the first move is forced,
+    // not a guess) runs.
+    window.setTimeout(() => {
+      const p = generateLogicalPuzzle(nextDifficulty);
+      setPuzzle(p);
+      setMarks(emptyMarks(p.n));
+    }, 20);
   }, []);
 
   useEffect(() => {
@@ -67,9 +75,41 @@ export default function QueensGame() {
     marks,
   ]);
 
-  const handleCellClick = useCallback(
+  // Holding and dragging paints X marks (or erases them) across several
+  // cells at once — the mode is decided by whatever the drag started on,
+  // so it never touches a placed queen mid-drag. A plain tap (no drag)
+  // still cycles a single cell through empty -> x -> queen -> empty.
+  const dragPaintMode = useRef<Mark | null>(null);
+
+  const handleDragDown = useCallback(
     (r: number, c: number) => {
       if (!puzzle || won) return;
+      const current = marks[r]?.[c];
+      dragPaintMode.current = current === "empty" ? "x" : current === "x" ? "empty" : null;
+    },
+    [puzzle, won, marks]
+  );
+
+  const handleDragEnter = useCallback(
+    (r: number, c: number) => {
+      if (!puzzle || won) return;
+      const mode = dragPaintMode.current;
+      if (!mode) return; // drag started on a placed queen — don't paint over it
+      setHintMessage(null);
+      setHintHighlights({});
+      setMarks((m) => {
+        const current = m[r][c];
+        if (mode === "x" && current === "empty") return setMark(m, r, c, "x");
+        if (mode === "empty" && current === "x") return setMark(m, r, c, "empty");
+        return m;
+      });
+    },
+    [puzzle, won]
+  );
+
+  const handleDragUp = useCallback(
+    (r: number, c: number, dragged: boolean) => {
+      if (!puzzle || won || dragged) return;
       setHintMessage(null);
       setHintHighlights({});
       setMarks((m) => {
@@ -136,14 +176,16 @@ export default function QueensGame() {
           marks={marks}
           cellPx={CELL_PX[difficulty]}
           interactive={!won}
-          onCellClick={handleCellClick}
+          onCellDown={handleDragDown}
+          onCellEnter={handleDragEnter}
+          onCellUp={handleDragUp}
           highlights={hintHighlights}
           conflicts={conflicts}
           dimmed={won}
         />
 
         {won && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm anim-fade-in">
             <p
               className="text-2xl"
               style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontWeight: 600, color: "var(--accent)" }}
@@ -163,6 +205,7 @@ export default function QueensGame() {
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-3">
+        {SOLVER_ENABLED && (
         <button
           type="button"
           onClick={handleHint}
@@ -172,6 +215,7 @@ export default function QueensGame() {
         >
           <FiZap size={13} /> {onCooldown ? `Hint (${cooldownRemaining}s)` : "Hint"}
         </button>
+        )}
         <button
           type="button"
           onClick={() => newGame(difficulty)}
@@ -182,6 +226,7 @@ export default function QueensGame() {
         </button>
       </div>
 
+      {SOLVER_ENABLED && (
       <div className="h-[60px] max-w-md flex items-center justify-center text-center">
         {hintMessage && (
           <p className="text-[var(--dim)] text-[11px] leading-relaxed" style={{ fontFamily: "var(--font-mono)" }}>
@@ -189,10 +234,12 @@ export default function QueensGame() {
           </p>
         )}
       </div>
+      )}
 
       <p className="text-[var(--dim)] text-[10px] tracking-[0.1em] text-center max-w-sm" style={{ fontFamily: "var(--font-mono)" }}>
-        Tap once for ✕, again for ♛, again to clear. One queen per row, column, and color — no two queens
-        touching, even diagonally. Hints have a cooldown so they stay a nudge, not a solve button.
+        Tap once for ✕, again for ♛, again to clear — or hold and drag across cells to paint (or
+        erase) ✕ marks over several at once. One queen per row, column, and color — no two queens
+        touching, even diagonally.
       </p>
     </div>
   );

@@ -4,9 +4,12 @@
 export type Difficulty = "small" | "medium" | "large";
 
 export const DIFFICULTY_CONFIG: Record<Difficulty, { size: number; walls: number; clues: number }> = {
-  small: { size: 5, walls: 3, clues: 5 },
-  medium: { size: 6, walls: 5, clues: 6 },
-  large: { size: 7, walls: 6, clues: 7 },
+  // Bigger boards, more walls (chokepoints that force a specific route),
+  // and fewer numbered clues relative to board size — sparser clues mean
+  // more of the route has to be worked out rather than just followed.
+  small: { size: 6, walls: 9, clues: 4 },
+  medium: { size: 7, walls: 14, clues: 5 },
+  large: { size: 8, walls: 20, clues: 6 },
 };
 
 export type Cell = [number, number];
@@ -59,7 +62,7 @@ function shuffle<T>(arr: T[]): T[] {
  */
 function findHamiltonianPath(size: number): Cell[] | null {
   const total = size * size;
-  let budget = 60_000;
+  let budget = 120_000;
 
   function search(start: Cell): Cell[] | null {
     const visited = new Set<string>([key(start[0], start[1])]);

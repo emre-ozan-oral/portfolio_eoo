@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { FiZap, FiRefreshCw, FiRotateCcw } from "react-icons/fi";
+import { SOLVER_ENABLED } from "../gameConfig";
 import {
   Cell,
   Difficulty,
@@ -13,6 +14,7 @@ import {
 } from "./wendEngine";
 import { nextHint, allWordsSolved } from "./solver";
 import WendBoard from "./WendBoard";
+import WendWordCounts from "./WendWordCounts";
 
 const DIFFICULTIES: { key: Difficulty; label: string }[] = [
   { key: "small", label: "Small" },
@@ -170,6 +172,8 @@ export default function WendGame() {
         </div>
       </div>
 
+      <WendWordCounts words={puzzle.words} solvedIds={solvedIds} />
+
       <div className="relative max-w-full overflow-x-auto">
         <WendBoard
           rows={puzzle.rows}
@@ -186,7 +190,7 @@ export default function WendGame() {
         />
 
         {won && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm anim-fade-in">
             <p
               className="text-2xl"
               style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontWeight: 600, color: "var(--accent)" }}
@@ -215,6 +219,7 @@ export default function WendGame() {
         >
           <FiRotateCcw size={13} /> Clear selection
         </button>
+        {SOLVER_ENABLED && (
         <button
           type="button"
           onClick={handleHint}
@@ -224,6 +229,7 @@ export default function WendGame() {
         >
           <FiZap size={13} /> {onCooldown ? `Hint (${cooldownRemaining}s)` : "Hint"}
         </button>
+        )}
         <button
           type="button"
           onClick={() => newGame(difficulty)}
@@ -234,6 +240,7 @@ export default function WendGame() {
         </button>
       </div>
 
+      {SOLVER_ENABLED && (
       <div className="h-[60px] max-w-md flex items-center justify-center text-center">
         {hintMessage && (
           <p className="text-[var(--dim)] text-[11px] leading-relaxed" style={{ fontFamily: "var(--font-mono)" }}>
@@ -241,10 +248,11 @@ export default function WendGame() {
           </p>
         )}
       </div>
+      )}
 
       <p className="text-[var(--dim)] text-[10px] tracking-[0.1em] text-center max-w-sm" style={{ fontFamily: "var(--font-mono)" }}>
-        Tap a letter, then tap adjacent letters to trace a word — every letter on the board is used by
-        exactly one word. Dark cells are unused. Hints reveal one more letter at a time, on a cooldown.
+        Hold and drag (or tap letter by letter) through adjacent letters to trace a word — every letter
+        on the board is used by exactly one word. Dark cells are unused.
       </p>
     </div>
   );

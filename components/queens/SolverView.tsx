@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiRefreshCw } from "react-icons/fi";
-import { Difficulty, Puzzle, emptyMarks, generatePuzzle } from "./queensEngine";
-import { solvePuzzle, SolverStep } from "./solver";
+import { Difficulty, Puzzle, emptyMarks } from "./queensEngine";
+import { solvePuzzle, SolverStep, generateLogicalPuzzle } from "./solver";
 import QueensBoard, { CellHighlight } from "./QueensBoard";
 
 const DIFFICULTIES: { key: Difficulty; label: string }[] = [
@@ -47,7 +47,7 @@ export default function SolverView() {
     setLoading(true);
     setAutoPlay(false);
     window.setTimeout(() => {
-      const p = generatePuzzle(nextDifficulty);
+      const p = generateLogicalPuzzle(nextDifficulty);
       setPuzzle(p);
       setSteps(solvePuzzle(p));
       setStepIndex(0);
@@ -150,7 +150,7 @@ export default function SolverView() {
           />
 
           {atEnd && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm anim-fade-in">
               <p
                 className="text-2xl"
                 style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontWeight: 600, color: "var(--accent)" }}

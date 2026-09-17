@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback } from "react";
+import { useCellDrag } from "@/hooks/useCellDrag";
 import { Marks } from "./queensEngine";
 
 export type CellHighlight = "source" | "target" | "conflict";
@@ -10,7 +12,13 @@ type QueensBoardProps = {
   marks: Marks;
   cellPx: number;
   interactive?: boolean;
-  onCellClick?: (r: number, c: number) => void;
+  /** Fires once, immediately, for the cell a gesture starts on. */
+  onCellDown?: (r: number, c: number) => void;
+  /** Fires for every new cell entered while the pointer is held — this is
+   * what lets holding and dragging paint X marks across several cells. */
+  onCellEnter?: (r: number, c: number) => void;
+  /** Fires on release; `dragged` is false for a plain tap (no movement). */
+  onCellUp?: (r: number, c: number, dragged: boolean) => void;
   highlights?: Record<string, CellHighlight>;
   conflicts?: Set<string>;
   dimmed?: boolean;
@@ -43,15 +51,26 @@ export default function QueensBoard({
   marks,
   cellPx,
   interactive = false,
-  onCellClick,
+  onCellDown,
+  onCellEnter,
+  onCellUp,
   highlights,
   conflicts,
   dimmed = false,
 }: QueensBoardProps) {
+  const guardedDown = useCallback((r: number, c: number) => interactive && onCellDown?.(r, c), [interactive, onCellDown]);
+  const guardedEnter = useCallback((r: number, c: number) => interactive && onCellEnter?.(r, c), [interactive, onCellEnter]);
+  const guardedUp = useCallback(
+    (r: number, c: number, dragged: boolean) => interactive && onCellUp?.(r, c, dragged),
+    [interactive, onCellUp]
+  );
+  const drag = useCellDrag({ onCellDown: guardedDown, onCellEnter: guardedEnter, onCellUp: guardedUp });
+
   return (
     <div
+      {...drag}
       className={`inline-grid border-2 border-[var(--accent)]/40 select-none ${dimmed ? "opacity-90" : ""}`}
-      style={{ gridTemplateColumns: `repeat(${n}, ${cellPx}px)` }}
+      style={{ gridTemplateColumns: `repeat(${n}, ${cellPx}px)`, touchAction: interactive ? "none" : undefined }}
     >
       {marks.map((row, r) =>
         row.map((mark, c) => {
@@ -65,9 +84,18 @@ export default function QueensBoard({
             <button
               key={cellKey}
               type="button"
+              data-r={r}
+              data-c={c}
               disabled={!interactive}
-              onClick={() => onCellClick?.(r, c)}
-              className="flex items-center justify-center border-[0.5px] border-black/15 transition-colors duration-150"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  if (interactive) onCellUp?.(r, c, false);
+                }
+              }}
+              className={`flex items-center justify-center border-[0.5px] border-black/15 transition-colors transition-transform duration-150 active:scale-95 ${
+                highlight === "target" ? "anim-pulse" : ""
+              }`}
               style={{
                 width: cellPx,
                 height: cellPx,
@@ -80,7 +108,9 @@ export default function QueensBoard({
               aria-label={`Row ${r + 1}, column ${c + 1}${mark !== "empty" ? `, ${mark}` : ""}`}
             >
               {mark === "queen" ? (
-                <span style={{ color: conflicted ? "#B33A3A" : "#1c1c1c" }}>♛</span>
+                <span className="anim-pop" style={{ display: "inline-block", color: conflicted ? "#B33A3A" : "#1c1c1c" }}>
+                  ♛
+                </span>
               ) : mark === "x" ? (
                 <span className="text-black/35">✕</span>
               ) : null}

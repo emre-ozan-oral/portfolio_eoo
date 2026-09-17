@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback } from "react";
+import { useCellDrag } from "@/hooks/useCellDrag";
 import { Cell, key, wallBetween } from "./zipEngine";
 
 export type CellHighlight = "hint";
@@ -43,10 +45,32 @@ export default function ZipBoard({
   const rows = Array.from({ length: size }, (_, r) => r);
   const cols = Array.from({ length: size }, (_, c) => c);
 
+  // Both a tap and a hold-and-drag just try to extend/retreat the path
+  // through whatever cell the pointer is over, so both hook callbacks do
+  // the same thing here.
+  const attempt = useCallback(
+    (r: number, c: number) => {
+      if (interactive) onCellClick?.(r, c);
+    },
+    [interactive, onCellClick]
+  );
+  // Only `onCellEnter` drives movement during an actual drag (it already
+  // includes the start cell once dragging begins); a plain tap has no
+  // drag at all, so it's handled once on release instead — this avoids
+  // processing the starting cell twice.
+  const drag = useCellDrag({
+    onCellDown: () => {},
+    onCellEnter: attempt,
+    onCellUp: (r, c, dragged) => {
+      if (!dragged) attempt(r, c);
+    },
+  });
+
   return (
     <div
+      {...drag}
       className={`inline-grid border-2 border-[var(--accent)]/40 bg-[var(--surface)] select-none ${dimmed ? "opacity-90" : ""}`}
-      style={{ gridTemplateColumns: `repeat(${size}, ${cellPx}px)` }}
+      style={{ gridTemplateColumns: `repeat(${size}, ${cellPx}px)`, touchAction: interactive ? "none" : undefined }}
     >
       {rows.map((r) =>
         cols.map((c) => {
@@ -71,9 +95,18 @@ export default function ZipBoard({
             <button
               key={k}
               type="button"
+              data-r={r}
+              data-c={c}
               disabled={!interactive}
-              onClick={() => onCellClick?.(r, c)}
-              className="relative flex items-center justify-center transition-colors duration-150"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  if (interactive) onCellClick?.(r, c);
+                }
+              }}
+              className={`relative flex items-center justify-center transition-colors transition-transform duration-150 active:scale-95 ${
+                onPath && idx === path.length - 1 ? "anim-pop" : ""
+              }`}
               style={{
                 width: cellPx,
                 height: cellPx,

@@ -122,10 +122,66 @@ function growRegions(n: number, solutionCols: number[]): number[][] {
   return regions;
 }
 
+/**
+ * Plain BFS region growth almost always produces regions of similar,
+ * multi-cell size — which means the very first move is essentially never
+ * forced by logic (no region is down to one candidate, and none is
+ * confined to a single row/column), so the player has to guess before
+ * anything else. This erodes the smallest region down to just its seed
+ * cell (its solution queen), reassigning its other cells outward to
+ * whichever neighboring region already touches them. That single-cell
+ * region is an immediate, guaranteed forced move — the region's own
+ * shape is what's sacrificed, not the puzzle's solvability, since every
+ * region still contains exactly its original solution queen. */
+function shrinkSmallestRegionToSeed(regions: number[][], n: number, solutionCols: number[]): void {
+  const counts = new Array(n).fill(0);
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) counts[regions[r][c]]++;
+
+  let target = 0;
+  for (let region = 1; region < n; region++) {
+    if (counts[region] < counts[target]) target = region;
+  }
+  if (counts[target] <= 1) return; // already a forced single-cell region
+
+  const seed: [number, number] = [target, solutionCols[target]];
+  const dirs = [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
+  ];
+
+  // Repeatedly reassign any cell of the target region that already
+  // borders a different region — a boundary "peel" that works inward
+  // pass by pass until only the seed is left.
+  let progress = true;
+  let guard = 0;
+  while (progress && guard++ < n * n) {
+    progress = false;
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (regions[r][c] !== target) continue;
+        if (r === seed[0] && c === seed[1]) continue;
+        for (const [dr, dc] of dirs) {
+          const rr = r + dr;
+          const cc = c + dc;
+          if (rr < 0 || rr >= n || cc < 0 || cc >= n) continue;
+          if (regions[rr][cc] !== target) {
+            regions[r][c] = regions[rr][cc];
+            progress = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
 export function generatePuzzle(difficulty: Difficulty): Puzzle {
   const { n } = DIFFICULTY_CONFIG[difficulty];
   const solutionCols = randomNonTouchingPermutation(n);
   const regions = growRegions(n, solutionCols);
+  shrinkSmallestRegionToSeed(regions, n, solutionCols);
   return { n, regions, solutionCols };
 }
 

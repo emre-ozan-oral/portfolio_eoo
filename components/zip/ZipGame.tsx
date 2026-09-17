@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { FiZap, FiRefreshCw, FiCornerUpLeft, FiRotateCcw } from "react-icons/fi";
+import { SOLVER_ENABLED } from "../gameConfig";
 import {
   Cell,
   Difficulty,
@@ -21,9 +22,9 @@ const DIFFICULTIES: { key: Difficulty; label: string }[] = [
 ];
 
 const CELL_PX: Record<Difficulty, number> = {
-  small: 58,
-  medium: 50,
-  large: 44,
+  small: 54,
+  medium: 46,
+  large: 40,
 };
 
 const HINT_COOLDOWN_MS = 20_000;
@@ -65,7 +66,22 @@ export default function ZipGame() {
 
   const handleCellClick = useCallback(
     (r: number, c: number) => {
-      if (!puzzle || won || locked) return;
+      if (!puzzle || won) return;
+
+      // Dragging (or tapping) back onto the second-to-last cell retreats
+      // the path by one step — lets a hold-and-drag double as an undo
+      // gesture without lifting the pointer.
+      if (path.length >= 2) {
+        const [pr, pc] = path[path.length - 2];
+        if (pr === r && pc === c) {
+          setPath(path.slice(0, -1));
+          setHintMessage(null);
+          setHintCell(null);
+          return;
+        }
+      }
+
+      if (locked) return;
       if (!isValidMove(puzzle, path, [r, c])) return;
       const nextPath: Cell[] = [...path, [r, c]];
       setPath(nextPath);
@@ -160,7 +176,7 @@ export default function ZipGame() {
         />
 
         {won && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm anim-fade-in">
             <p
               className="text-2xl"
               style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontWeight: 600, color: "var(--accent)" }}
@@ -204,6 +220,7 @@ export default function ZipGame() {
         >
           <FiRotateCcw size={13} /> Reset path
         </button>
+        {SOLVER_ENABLED && (
         <button
           type="button"
           onClick={handleHint}
@@ -213,6 +230,7 @@ export default function ZipGame() {
         >
           <FiZap size={13} /> {onCooldown ? `Hint (${cooldownRemaining}s)` : "Hint"}
         </button>
+        )}
         <button
           type="button"
           onClick={() => newGame(difficulty)}
@@ -223,6 +241,7 @@ export default function ZipGame() {
         </button>
       </div>
 
+      {SOLVER_ENABLED && (
       <div className="h-[60px] max-w-md flex items-center justify-center text-center">
         {hintMessage && (
           <p className="text-[var(--dim)] text-[11px] leading-relaxed" style={{ fontFamily: "var(--font-mono)" }}>
@@ -230,10 +249,11 @@ export default function ZipGame() {
           </p>
         )}
       </div>
+      )}
 
       <p className="text-[var(--dim)] text-[10px] tracking-[0.1em] text-center max-w-sm" style={{ fontFamily: "var(--font-mono)" }}>
-        Start at 1 and tap adjacent cells to draw one path through every cell, hitting the numbers in
-        order. Thick borders are walls the path can&apos;t cross. Hints have a cooldown so they stay a nudge.
+        Start at 1, then hold and drag (or tap cell by cell) through every cell, hitting the numbers
+        in order — drag back over the path to undo. Thick borders are walls the path can&apos;t cross.
       </p>
     </div>
   );

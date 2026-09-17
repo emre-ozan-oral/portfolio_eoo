@@ -317,7 +317,7 @@ export default function MinesweeperGame() {
         />
 
         {(status === "won" || status === "lost" || status === "revealed") && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm anim-fade-in">
             <p
               className="text-2xl"
               style={{
@@ -389,7 +389,8 @@ export default function MinesweeperGame() {
         style={{ fontFamily: "var(--font-mono)" }}
       >
         Right-click to flag on desktop, or toggle Flag mode on touch devices. Click a revealed
-        number once you&apos;ve flagged all its mines to reveal the rest of its neighbors at once.
+        number to reveal the rest of its hidden neighbors at once — even if your flags aren&apos;t
+        (or aren&apos;t all) placed yet, so it can open a mine if you&apos;re wrong.
       </p>
     </div>
   );

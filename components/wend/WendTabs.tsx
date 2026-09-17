@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { SOLVER_ENABLED } from "../gameConfig";
 import WendGame from "./WendGame";
 import SolverView from "./SolverView";
 
@@ -11,6 +12,10 @@ const TABS = [
 
 export default function WendTabs() {
   const [tab, setTab] = useState<(typeof TABS)[number]["key"]>("play");
+
+  if (!SOLVER_ENABLED) {
+    return <WendGame />;
+  }
 
   return (
     <div className="flex flex-col items-center gap-10">

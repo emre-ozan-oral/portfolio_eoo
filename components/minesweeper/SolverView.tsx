@@ -201,7 +201,7 @@ export default function SolverView() {
               />
 
               {atEnd && outcome && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm anim-fade-in">
                   <p
                     className="text-2xl"
                     style={{

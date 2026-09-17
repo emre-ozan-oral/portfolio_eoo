@@ -5,6 +5,7 @@ import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiRefreshCw } from "react-i
 import { Cell, Difficulty, Puzzle, generatePuzzle } from "./wendEngine";
 import { solvePuzzle, SolverStep } from "./solver";
 import WendBoard from "./WendBoard";
+import WendWordCounts from "./WendWordCounts";
 
 const DIFFICULTIES: { key: Difficulty; label: string }[] = [
   { key: "small", label: "Small" },
@@ -138,6 +139,8 @@ export default function SolverView() {
         </div>
       </div>
 
+      <WendWordCounts words={puzzle.words} solvedIds={solvedIds} />
+
       <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 w-full justify-center">
         <div className="relative max-w-full overflow-x-auto">
           <WendBoard
@@ -153,7 +156,7 @@ export default function SolverView() {
           />
 
           {atEnd && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/90 backdrop-blur-sm anim-fade-in">
               <p
                 className="text-2xl"
                 style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontWeight: 600, color: "var(--accent)" }}

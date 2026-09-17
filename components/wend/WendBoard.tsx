@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback } from "react";
+import { useCellDrag } from "@/hooks/useCellDrag";
 import { PlantedWord, key, wordIdAtCell } from "./wendEngine";
 
 type WendBoardProps = {
@@ -16,7 +18,7 @@ type WendBoardProps = {
   dimmed?: boolean;
 };
 
-const SOLVED_COLORS = [
+export const SOLVED_COLORS = [
   "color-mix(in srgb, var(--tag-personal) 55%, transparent)",
   "color-mix(in srgb, var(--accent) 45%, transparent)",
   "color-mix(in srgb, #B48EAD 50%, transparent)",
@@ -40,10 +42,33 @@ export default function WendBoard({
   selection.forEach(([r, c], i) => selectionIndex.set(key(r, c), i));
   const hintSet = new Set(hintCells.map(([r, c]) => key(r, c)));
 
+  // A tap and a hold-and-drag both just try to extend (or retreat) the
+  // current selection through whatever letter the pointer is over.
+  const attempt = useCallback(
+    (r: number, c: number) => {
+      if (!interactive || letters[r][c] === null) return;
+      onCellClick?.(r, c);
+    },
+    [interactive, letters, onCellClick]
+  );
+  // Only `onCellEnter` drives movement during an actual drag (it already
+  // includes the start cell once dragging begins); a plain tap has no
+  // drag at all, so it's handled once on release instead — this avoids
+  // processing the starting cell twice (which, for Wend's toggle-style
+  // selection, would immediately undo the very cell it just selected).
+  const drag = useCellDrag({
+    onCellDown: () => {},
+    onCellEnter: attempt,
+    onCellUp: (r, c, dragged) => {
+      if (!dragged) attempt(r, c);
+    },
+  });
+
   return (
     <div
+      {...drag}
       className={`inline-grid border-2 border-[var(--accent)]/40 bg-[var(--surface)] select-none ${dimmed ? "opacity-90" : ""}`}
-      style={{ gridTemplateColumns: `repeat(${cols}, ${cellPx}px)` }}
+      style={{ gridTemplateColumns: `repeat(${cols}, ${cellPx}px)`, touchAction: interactive ? "none" : undefined }}
     >
       {letters.map((row, r) =>
         row.map((letter, c) => {
@@ -64,9 +89,18 @@ export default function WendBoard({
             <button
               key={k}
               type="button"
+              data-r={r}
+              data-c={c}
               disabled={!interactive || blocked}
-              onClick={() => onCellClick?.(r, c)}
-              className="relative flex items-center justify-center border-[0.5px] border-[var(--border)] transition-colors duration-150"
+              onKeyDown={(e) => {
+                if ((e.key === "Enter" || e.key === " ") && interactive && !blocked) {
+                  e.preventDefault();
+                  onCellClick?.(r, c);
+                }
+              }}
+              className={`relative flex items-center justify-center border-[0.5px] border-[var(--border)] transition-colors transition-transform duration-150 active:scale-95 ${
+                selIdx !== undefined && selIdx === selection.length - 1 ? "anim-pop" : ""
+              } ${solved ? "anim-stamp" : ""}`}
               style={{
                 width: cellPx,
                 height: cellPx,

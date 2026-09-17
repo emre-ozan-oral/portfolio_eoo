@@ -92,9 +92,9 @@ export default function MinesweeperBoard({
               }}
               className={`flex items-center justify-center border-[0.5px] border-[var(--border)] transition-colors duration-150 ${
                 cell.revealed
-                  ? interactive && !cell.mine && cell.adjacent > 0
-                    ? "hover:bg-white/[0.05]"
-                    : ""
+                  ? `${!cell.mine ? "anim-cell-reveal" : ""} ${
+                      interactive && !cell.mine && cell.adjacent > 0 ? "hover:bg-white/[0.05]" : ""
+                    }`
                   : interactive
                     ? "bg-white/[0.03] hover:bg-white/[0.06]"
                     : "bg-white/[0.03]"

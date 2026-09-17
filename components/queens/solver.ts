@@ -3,7 +3,15 @@
 // fallback when logic alone stalls. Produces single steps for an in-game
 // "Hint" button, or a full trace for a "Watch solver" demo.
 
-import { Marks, Puzzle, cloneMarks, queenPositions } from "./queensEngine";
+import {
+  Difficulty,
+  Marks,
+  Puzzle,
+  cloneMarks,
+  emptyMarks,
+  generatePuzzle as generateRawPuzzle,
+  queenPositions,
+} from "./queensEngine";
 
 export type StepKind =
   | "row-forced"
@@ -203,6 +211,50 @@ export function fallbackStep(puzzle: Puzzle, marks: Marks): SolverStep | null {
     };
   }
   return null;
+}
+
+// Plain random region growth often produces a puzzle whose very first move
+// is a guess — nothing is forced until a queen or two is already placed.
+// That's a bad first impression, so puzzle generation regenerates until the
+// opening move is at least a real deduction, and prefers (within a smaller
+// budget) one that solves end-to-end by logic alone.
+const MAX_GENERATION_ATTEMPTS = 400;
+const FULL_LOGIC_ATTEMPT_BUDGET = 120;
+
+function solvesFullyByLogic(puzzle: Puzzle): boolean {
+  let marks = emptyMarks(puzzle.n);
+  const maxSteps = puzzle.n * puzzle.n + puzzle.n + 5;
+  for (let i = 0; i < maxSteps; i++) {
+    if (queenPositions(marks).length === puzzle.n) return true;
+    const step = findNextStep(puzzle, marks);
+    if (!step) return false;
+    marks = step.marks;
+  }
+  return queenPositions(marks).length === puzzle.n;
+}
+
+/** Generates a Queens puzzle whose opening move is always a genuine
+ * deduction (never a guess), preferring one solvable by logic alone
+ * end-to-end when that's found within a smaller attempt budget. */
+export function generateLogicalPuzzle(difficulty: Difficulty): Puzzle {
+  let firstFallback: Puzzle | null = null;
+
+  for (let attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
+    const puzzle = generateRawPuzzle(difficulty);
+    const hasForcedOpening = findNextStep(puzzle, emptyMarks(puzzle.n)) !== null;
+    if (!hasForcedOpening) continue;
+
+    if (!firstFallback) firstFallback = puzzle;
+    if (attempt < FULL_LOGIC_ATTEMPT_BUDGET) {
+      if (solvesFullyByLogic(puzzle)) return puzzle;
+    } else {
+      // Past the full-logic budget: settle for "the opening move is
+      // forced" rather than keep searching indefinitely.
+      return puzzle;
+    }
+  }
+
+  return firstFallback ?? generateRawPuzzle(difficulty);
 }
 
 export function nextHint(puzzle: Puzzle, marks: Marks): SolverStep | null {
